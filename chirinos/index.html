@@ -1,0 +1,377 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Taller: Gestión del Estrés - Francisco Chirinos</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        :root {
+            --navy: #002147;
+            --orange: #FF8C00;
+            --white: #FFFFFF;
+        }
+        body {
+            background-color: #f3f4f6;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            overflow: hidden;
+        }
+        .slide {
+            display: none;
+            height: 100vh;
+            width: 100vw;
+            padding: 40px;
+            box-sizing: border-box;
+            transition: opacity 0.5s ease-in-out;
+        }
+        .slide.active {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            opacity: 1;
+        }
+        .bg-navy { background-color: var(--navy); }
+        .text-navy { color: var(--navy); }
+        .bg-orange { background-color: var(--orange); }
+        .text-orange { color: var(--orange); }
+        .border-orange { border-color: var(--orange); }
+
+        .title-line {
+            height: 4px;
+            width: 80px;
+            background-color: var(--orange);
+            margin-top: 10px;
+        }
+
+        .card {
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+            padding: 25px;
+            transition: transform 0.3s;
+        }
+
+        .nav-btn {
+            position: fixed;
+            bottom: 20px;
+            padding: 10px 20px;
+            background: var(--navy);
+            color: white;
+            border-radius: 50px;
+            cursor: pointer;
+            z-index: 100;
+            border: 2px solid var(--orange);
+            transition: all 0.3s;
+        }
+        .nav-btn:hover { background: var(--orange); color: var(--navy); }
+        #prevBtn { left: 20px; }
+        #nextBtn { right: 20px; }
+
+        .progress-bar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            height: 5px;
+            background: var(--orange);
+            z-index: 200;
+            transition: width 0.3s;
+        }
+
+        .module-badge {
+            display: inline-block;
+            padding: 5px 15px;
+            border-radius: 20px;
+            font-weight: bold;
+            font-size: 0.8rem;
+            margin-bottom: 10px;
+            background: var(--orange);
+            color: var(--navy);
+        }
+    </style>
+</head>
+<body>
+
+<div class="progress-bar" id="progressBar"></div>
+
+<!-- SLIDE 1: PORTADA -->
+<div class="slide active bg-navy text-white text-center">
+    <div class="max-w-4xl mx-auto">
+        <h3 class="text-orange tracking-widest uppercase mb-4">Desarrollo Humano y Profesional</h3>
+        <h1 class="text-5xl md:text-7xl font-bold mb-6">Gestión Efectiva del Estrés</h1>
+        <h2 class="text-2xl md:text-4xl font-light text-gray-300 mb-12">Y Desempeño Bajo Presión</h2>
+        <div class="flex justify-center items-center gap-4 mb-8">
+            <div class="h-24 w-24 rounded-full border-4 border-orange overflow-hidden bg-gray-200">
+                <img src="https://ui-avatars.com/api/?name=Francisco+Chirinos&background=FF8C00&color=002147&size=128" alt="Facilitador">
+            </div>
+            <div class="text-left">
+                <p class="text-xl font-bold">Francisco de Jesús Chirinos</p>
+                <p class="text-orange">Facilitador Experto</p>
+            </div>
+        </div>
+        <p class="text-sm text-gray-400">© 2024 Todos los derechos reservados</p>
+    </div>
+</div>
+
+<!-- SLIDE 2: ADN DEL PROGRAMA -->
+<div class="slide bg-white">
+    <div class="max-w-6xl mx-auto grid grid-cols-1 md:grid-cols-2 gap-12 items-center">
+        <div>
+            <div class="module-badge">PROPÓSITO</div>
+            <h2 class="text-4xl font-bold text-navy mb-4">ADN del Programa</h2>
+            <div class="title-line mb-6"></div>
+            <p class="text-xl text-gray-700 leading-relaxed italic">
+                "Fortalecer competencias emocionales, cognitivas y conductuales para enfrentar situaciones de presión de manera efectiva."
+            </p>
+        </div>
+        <div class="bg-gray-50 p-8 rounded-3xl border-l-8 border-orange shadow-inner">
+            <h3 class="text-2xl font-bold text-navy mb-6">Objetivos Clave</h3>
+            <ul class="space-y-4">
+                <li class="flex items-start gap-3">
+                    <i class="fas fa-check-circle text-orange mt-1"></i>
+                    <span>Identificar fuentes de presión y estrés laboral.</span>
+                </li>
+                <li class="flex items-start gap-3">
+                    <i class="fas fa-check-circle text-orange mt-1"></i>
+                    <span>Aplicar técnicas de regulación emocional.</span>
+                </li>
+                <li class="flex items-start gap-3">
+                    <i class="fas fa-check-circle text-orange mt-1"></i>
+                    <span>Mejorar la toma de decisiones bajo presión.</span>
+                </li>
+                <li class="flex items-start gap-3">
+                    <i class="fas fa-check-circle text-orange mt-1"></i>
+                    <span>Fortalecer la resiliencia y el autocontrol.</span>
+                </li>
+            </ul>
+        </div>
+    </div>
+</div>
+
+<!-- SLIDE 3: MÓDULO I -->
+<div class="slide bg-navy text-white">
+    <div class="max-w-5xl mx-auto">
+        <div class="module-badge">MÓDULO I</div>
+        <h2 class="text-5xl font-bold mb-8">Comprensión del Estrés</h2>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+            <div class="card bg-white/10 border border-white/20">
+                <h3 class="text-2xl font-bold text-orange mb-4"><i class="fas fa-smile-beam mr-2"></i> Eustrés</h3>
+                <p class="text-gray-200 text-lg">Es el estrés positivo. Nos motiva, nos mantiene enfocados y mejora nuestro rendimiento ante retos manejables.</p>
+            </div>
+            <div class="card bg-white/10 border border-white/20">
+                <h3 class="text-2xl font-bold text-red-400 mb-4"><i class="fas fa-dizzy mr-2"></i> Distrés</h3>
+                <p class="text-gray-200 text-lg">Es el estrés negativo. Nos bloquea, causa fatiga crónica y afecta nuestra salud física y mental.</p>
+            </div>
+        </div>
+        <div class="mt-12 p-6 bg-orange/20 rounded-xl border border-orange/50 text-center">
+            <p class="text-xl font-semibold">"El estrés no es lo que nos pasa, sino cómo reaccionamos ante ello."</p>
+        </div>
+    </div>
+</div>
+
+<!-- SLIDE 4: MÓDULO II (AUTOCONOCIMIENTO) -->
+<div class="slide bg-white">
+    <div class="max-w-6xl mx-auto">
+        <div class="module-badge">MÓDULO II</div>
+        <h2 class="text-4xl font-bold text-navy mb-8">Autoconocimiento: Tus Detonantes</h2>
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+            <div class="card border-t-4 border-orange">
+                <i class="fas fa-bolt text-3xl text-orange mb-4"></i>
+                <h4 class="font-bold text-navy mb-2">Físicos</h4>
+                <p class="text-gray-600 text-sm">Sudoración, taquicardia, tensión muscular, dolores de cabeza.</p>
+            </div>
+            <div class="card border-t-4 border-orange">
+                <i class="fas fa-brain text-3xl text-orange mb-4"></i>
+                <h4 class="font-bold text-navy mb-2">Cognitivos</h4>
+                <p class="text-gray-600 text-sm">Falta de concentración, olvidos, pensamientos intrusivos.</p>
+            </div>
+            <div class="card border-t-4 border-orange">
+                <i class="fas fa-heart text-3xl text-orange mb-4"></i>
+                <h4 class="font-bold text-navy mb-2">Emocionales</h4>
+                <p class="text-gray-600 text-sm">Irritabilidad, ansiedad, apatía, frustración constante.</p>
+            </div>
+        </div>
+        <div class="bg-navy text-white p-6 rounded-2xl flex items-center gap-6">
+            <div class="bg-orange p-4 rounded-full"><i class="fas fa-users text-navy text-2xl"></i></div>
+            <div>
+                <h4 class="font-bold text-orange">DINÁMICA: "El Mapa de mis Detonantes"</h4>
+                <p class="text-sm text-gray-300">Identifica en silencio los 3 factores que más elevan tu presión en la oficina.</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- SLIDE 5: MÓDULO III (HERRAMIENTAS) -->
+<div class="slide bg-gray-50">
+    <div class="max-w-6xl mx-auto">
+        <div class="module-badge">MÓDULO III</div>
+        <h2 class="text-4xl font-bold text-navy mb-12 text-center">Técnicas de Manejo de Estrés</h2>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-12">
+            <div class="space-y-6">
+                <div class="flex gap-4 items-center">
+                    <span class="bg-orange text-navy h-10 w-10 flex items-center justify-center rounded-full font-bold">01</span>
+                    <div>
+                        <h4 class="font-bold text-xl">Respiración Consciente</h4>
+                        <p class="text-gray-600">Técnica 4-7-8 para calmar el sistema nervioso en 1 minuto.</p>
+                    </div>
+                </div>
+                <div class="flex gap-4 items-center">
+                    <span class="bg-orange text-navy h-10 w-10 flex items-center justify-center rounded-full font-bold">02</span>
+                    <div>
+                        <h4 class="font-bold text-xl">Gestión del Tiempo</h4>
+                        <p class="text-gray-600">Matriz de Prioridades: Diferenciar lo urgente de lo importante.</p>
+                    </div>
+                </div>
+            </div>
+            <div class="bg-navy text-white p-8 rounded-3xl relative overflow-hidden">
+                <i class="fas fa-clock absolute -right-10 -bottom-10 text-9xl text-white/5"></i>
+                <h4 class="text-orange font-bold text-2xl mb-4">¡Práctica en Vivo!</h4>
+                <p class="mb-6">Vamos a realizar un ejercicio de respiración guiada para bajar el cortisol.</p>
+                <button class="bg-orange text-navy px-6 py-2 rounded-full font-bold hover:bg-white transition">Empezar 4s</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- SLIDE 6: MÓDULO IV (PRESIÓN) -->
+<div class="slide bg-white">
+    <div class="max-w-5xl mx-auto">
+        <div class="module-badge">MÓDULO IV</div>
+        <h2 class="text-4xl font-bold text-navy mb-4">Desempeño Bajo Presión</h2>
+        <div class="title-line mb-10"></div>
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+            <div class="text-center p-6">
+                <div class="w-20 h-20 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4 border-2 border-orange">
+                    <i class="fas fa-bolt text-navy text-3xl"></i>
+                </div>
+                <h4 class="font-bold">Decisiones Rápidas</h4>
+                <p class="text-gray-500 text-sm mt-2">Agilidad mental sin perder la precisión.</p>
+            </div>
+            <div class="text-center p-6">
+                <div class="w-20 h-20 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4 border-2 border-orange">
+                    <i class="fas fa-comments text-navy text-3xl"></i>
+                </div>
+                <h4 class="font-bold">Comunicación Crítica</h4>
+                <p class="text-gray-500 text-sm mt-2">Mensajes claros cuando el tiempo es oro.</p>
+            </div>
+            <div class="text-center p-6">
+                <div class="w-20 h-20 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4 border-2 border-orange">
+                    <i class="fas fa-puzzle-piece text-navy text-3xl"></i>
+                </div>
+                <h4 class="font-bold">Resolución</h4>
+                <p class="text-gray-500 text-sm mt-2">Foco en la solución, no en el pánico.</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- SLIDE 7: MÓDULO V (CIERRE) -->
+<div class="slide bg-navy text-white">
+    <div class="max-w-4xl mx-auto text-center">
+        <div class="module-badge">MÓDULO V</div>
+        <h2 class="text-5xl font-bold mb-8">Resiliencia y Hábitos</h2>
+        <p class="text-2xl font-light text-gray-300 italic mb-12">
+            "La resiliencia no es aguantar el golpe, es aprender a rebotar más alto."
+        </p>
+        <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+            <div class="p-4 border border-orange/30 rounded-xl">
+                <i class="fas fa-seedling text-orange mb-2"></i>
+                <p class="text-xs">Mentalidad de Crecimiento</p>
+            </div>
+            <div class="p-4 border border-orange/30 rounded-xl">
+                <i class="fas fa-adjust text-orange mb-2"></i>
+                <p class="text-xs">Adaptabilidad al Cambio</p>
+            </div>
+            <div class="p-4 border border-orange/30 rounded-xl">
+                <i class="fas fa-apple-alt text-orange mb-2"></i>
+                <p class="text-xs">Hábitos Saludables</p>
+            </div>
+            <div class="p-4 border border-orange/30 rounded-xl">
+                <i class="fas fa-infinity text-orange mb-2"></i>
+                <p class="text-xs">Sostenibilidad</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- SLIDE 8: CONTACTO -->
+<div class="slide bg-white text-navy">
+    <div class="max-w-4xl mx-auto text-center">
+        <h2 class="text-4xl font-bold mb-2">¿Listo para transformar la presión en poder?</h2>
+        <div class="title-line mx-auto mb-12"></div>
+        
+        <div class="card border-2 border-navy inline-block p-10">
+            <h3 class="text-2xl font-bold mb-6">Francisco de Jesús Chirinos</h3>
+            <div class="space-y-4 text-left">
+                <div class="flex items-center gap-4 text-lg">
+                    <i class="fab fa-whatsapp text-green-500 text-2xl"></i>
+                    <span>+58 416 876 6671</span>
+                </div>
+                <div class="flex items-center gap-4 text-lg">
+                    <i class="far fa-envelope text-orange text-2xl"></i>
+                    <span>conversandoconchirinos@gmail.com</span>
+                </div>
+                <div class="flex items-center gap-4 text-lg">
+                    <i class="fab fa-instagram text-pink-500 text-2xl"></i>
+                    <span>@conversandoconchirinos</span>
+                </div>
+            </div>
+        </div>
+        
+        <p class="mt-12 text-gray-400 font-bold tracking-tighter uppercase">¡Muchas Gracias!</p>
+    </div>
+</div>
+
+<button class="nav-btn" id="prevBtn"><i class="fas fa-arrow-left"></i></button>
+<button class="nav-btn" id="nextBtn"><i class="fas fa-arrow-right"></i></button>
+
+<script>
+    let currentSlide = 0;
+    const slides = document.querySelectorAll('.slide');
+    const progressBar = document.getElementById('progressBar');
+
+    function updateSlide() {
+        slides.forEach((slide, index) => {
+            slide.classList.remove('active');
+            if (index === currentSlide) {
+                slide.classList.add('active');
+            }
+        });
+        
+        // Update progress bar
+        const progress = ((currentSlide + 1) / slides.length) * 100;
+        progressBar.style.width = progress + '%';
+        
+        // Show/hide buttons
+        document.getElementById('prevBtn').style.display = currentSlide === 0 ? 'none' : 'block';
+        document.getElementById('nextBtn').innerHTML = currentSlide === slides.length - 1 ? 
+            'Finalizar <i class="fas fa-check"></i>' : 'Siguiente <i class="fas fa-arrow-right"></i>';
+    }
+
+    document.getElementById('nextBtn').addEventListener('click', () => {
+        if (currentSlide < slides.length - 1) {
+            currentSlide++;
+            updateSlide();
+        } else {
+            alert("¡Presentación finalizada con éxito!");
+        }
+    });
+
+    document.getElementById('prevBtn').addEventListener('click', () => {
+        if (currentSlide > 0) {
+            currentSlide--;
+            updateSlide();
+        }
+    });
+
+    // Soporte para flechas de teclado
+    document.addEventListener('keydown', (e) => {
+        if (e.key === 'ArrowRight') document.getElementById('nextBtn').click();
+        if (e.key === 'ArrowLeft') document.getElementById('prevBtn').click();
+    });
+
+    updateSlide();
+</script>
+
+</body>
+</html>
