@@ -2,7 +2,7 @@
 <html lang="es">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, user-scalable=yes">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, user-scalable=no">
     <title>Taller: Gestión del Estrés - Francisco Chirinos</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
@@ -11,30 +11,71 @@
             --navy: #002147;
             --orange: #FF8C00;
             --white: #FFFFFF;
-            --gray-bg: #f3f4f6;
         }
         
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
+            user-select: none; /* Evita selección de texto en móvil */
         }
         
         body {
-            background-color: var(--gray-bg);
+            background-color: #1a1a2e;
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            overflow-x: hidden;
+            overflow: hidden;
+            position: fixed;
+            width: 100%;
+            height: 100%;
         }
         
-        /* Modo horizontal - mejor para móvil */
+        /* Modo pantalla completa al girar a horizontal */
         @media (orientation: landscape) {
-            .section {
-                min-height: 100vh;
-                height: auto;
-                display: flex;
-                align-items: center;
-                justify-content: center;
+            body {
+                overflow: hidden;
             }
+            /* Ocultar barras del navegador en móvil */
+            .hide-ui-on-landscape {
+                position: fixed;
+                top: 0;
+                left: 0;
+                width: 100%;
+                height: 100%;
+            }
+        }
+        
+        /* Contenedor de slides en horizontal */
+        .slides-container {
+            display: flex;
+            overflow-x: auto;
+            scroll-snap-type: x mandatory;
+            scroll-behavior: smooth;
+            -webkit-overflow-scrolling: touch;
+            width: 100%;
+            height: 100%;
+            position: relative;
+        }
+        
+        .slide {
+            flex: 0 0 100%;
+            scroll-snap-align: start;
+            width: 100%;
+            height: 100%;
+            overflow-y: auto;
+            padding: 30px 40px;
+            box-sizing: border-box;
+        }
+        
+        /* Scroll suave dentro de cada slide si es necesario */
+        .slide::-webkit-scrollbar {
+            width: 4px;
+        }
+        .slide::-webkit-scrollbar-track {
+            background: rgba(255,255,255,0.1);
+        }
+        .slide::-webkit-scrollbar-thumb {
+            background: var(--orange);
+            border-radius: 10px;
         }
         
         /* Modo vertical - aviso */
@@ -42,7 +83,10 @@
             .orientation-warning {
                 display: flex !important;
             }
-            .main-content {
+            .slides-container {
+                display: none !important;
+            }
+            .nav-buttons {
                 display: none !important;
             }
         }
@@ -64,31 +108,6 @@
             padding: 20px;
         }
         
-        .main-content {
-            display: block;
-            width: 100%;
-        }
-        
-        /* Secciones estilo scroll único */
-        .section {
-            padding: 60px 40px;
-            width: 100%;
-            position: relative;
-        }
-        
-        .section:nth-child(even) {
-            background-color: white;
-        }
-        
-        .section:nth-child(odd) {
-            background-color: var(--gray-bg);
-        }
-        
-        .section-dark {
-            background-color: var(--navy);
-            color: white;
-        }
-        
         .bg-navy { background-color: var(--navy); }
         .text-navy { color: var(--navy); }
         .bg-orange { background-color: var(--orange); }
@@ -99,14 +118,14 @@
             height: 4px;
             width: 80px;
             background-color: var(--orange);
-            margin: 15px 0 25px 0;
+            margin-top: 10px;
         }
         
         .title-line-center {
             height: 4px;
             width: 80px;
             background-color: var(--orange);
-            margin: 15px auto 25px auto;
+            margin: 15px auto;
         }
         
         .card {
@@ -115,7 +134,6 @@
             box-shadow: 0 10px 30px rgba(0,0,0,0.1);
             padding: 25px;
             transition: transform 0.3s;
-            height: 100%;
         }
         
         .card-dark {
@@ -124,142 +142,89 @@
             border: 1px solid rgba(255,255,255,0.2);
         }
         
-        .card:hover {
-            transform: translateY(-5px);
-        }
-        
         .module-badge {
             display: inline-block;
-            padding: 6px 18px;
-            border-radius: 30px;
+            padding: 5px 15px;
+            border-radius: 20px;
             font-weight: bold;
             font-size: 0.75rem;
-            margin-bottom: 15px;
+            margin-bottom: 10px;
             background: var(--orange);
             color: var(--navy);
-            letter-spacing: 1px;
         }
         
-        /* Botones flotantes minimalistas */
-        .nav-float {
+        /* Botones de navegación MINIMALISTAS y PEQUEÑOS */
+        .nav-buttons {
             position: fixed;
             bottom: 20px;
             right: 20px;
-            z-index: 100;
+            z-index: 200;
             display: flex;
-            gap: 10px;
+            gap: 8px;
         }
         
-        .nav-btn-mini {
-            width: 45px;
-            height: 45px;
-            border-radius: 50%;
-            background: var(--navy);
-            color: white;
-            border: 2px solid var(--orange);
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            transition: all 0.3s;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.2);
-            font-size: 1.2rem;
-        }
-        
-        .nav-btn-mini:hover {
-            background: var(--orange);
-            color: var(--navy);
-            transform: scale(1.1);
-        }
-        
-        /* Botón de volver arriba */
-        .scroll-top {
-            position: fixed;
-            bottom: 20px;
-            left: 20px;
+        .nav-btn {
             width: 40px;
             height: 40px;
             border-radius: 50%;
-            background: var(--orange);
-            color: var(--navy);
-            border: none;
+            background: rgba(0,33,71,0.85);
+            backdrop-filter: blur(5px);
+            color: white;
+            border: 1.5px solid var(--orange);
             cursor: pointer;
             display: flex;
             align-items: center;
             justify-content: center;
-            transition: all 0.3s;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.2);
-            opacity: 0;
-            visibility: hidden;
+            transition: all 0.2s;
+            font-size: 1rem;
         }
         
-        .scroll-top.visible {
-            opacity: 1;
-            visibility: visible;
+        .nav-btn:hover {
+            background: var(--orange);
+            color: var(--navy);
+            transform: scale(1.05);
         }
         
-        .scroll-top:hover {
-            transform: scale(1.1);
-            background: var(--navy);
-            color: var(--orange);
+        .nav-btn:active {
+            transform: scale(0.95);
         }
         
-        /* Indicador de progreso scroll */
-        .scroll-progress {
+        /* Botón de solo ícono, sin texto */
+        .nav-btn span {
+            display: none;
+        }
+        
+        /* Indicador de página */
+        .page-dots {
             position: fixed;
-            top: 0;
-            left: 0;
-            height: 3px;
-            background: var(--orange);
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            gap: 8px;
             z-index: 200;
-            transition: width 0.1s;
+            background: rgba(0,33,71,0.6);
+            backdrop-filter: blur(5px);
+            padding: 8px 15px;
+            border-radius: 30px;
         }
         
-        /* Animaciones suaves */
-        .fade-up {
-            opacity: 0;
-            transform: translateY(30px);
-            transition: opacity 0.6s ease, transform 0.6s ease;
+        .dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: rgba(255,255,255,0.4);
+            transition: all 0.3s;
+            cursor: pointer;
         }
         
-        .fade-up.visible {
-            opacity: 1;
-            transform: translateY(0);
-        }
-        
-        /* Grid responsivo */
-        .grid-responsive {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-            gap: 25px;
-        }
-        
-        /* Para móvil horizontal */
-        @media (max-width: 900px) and (orientation: landscape) {
-            .section {
-                padding: 40px 30px;
-            }
-            h1 { font-size: 2.5rem; }
-            h2 { font-size: 2rem; }
-        }
-        
-        /* Scroll suave */
-        html {
-            scroll-behavior: smooth;
-        }
-        
-        /* Ocultar scrollbar en móvil pero mantener funcionalidad */
-        ::-webkit-scrollbar {
-            width: 5px;
-        }
-        ::-webkit-scrollbar-track {
-            background: #e5e7eb;
-        }
-        ::-webkit-scrollbar-thumb {
+        .dot.active {
             background: var(--orange);
+            width: 20px;
             border-radius: 10px;
         }
         
+        /* Animación de rotación para el aviso */
         .rotate-animation {
             animation: rotatePhone 1.5s ease-in-out infinite;
         }
@@ -269,17 +234,66 @@
             50% { transform: rotate(90deg); }
             100% { transform: rotate(0deg); }
         }
+        
+        /* Esconder scrollbar en slides-container pero mantener funcionalidad */
+        .slides-container::-webkit-scrollbar {
+            display: none;
+        }
+        .slides-container {
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+        }
+        
+        /* Grid responsivo */
+        .grid-responsive {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 25px;
+        }
+        
+        /* Para pantallas muy pequeñas en horizontal */
+        @media (max-width: 900px) and (orientation: landscape) {
+            .slide {
+                padding: 20px 25px;
+            }
+            h1 { font-size: 2.5rem !important; }
+            h2 { font-size: 1.8rem !important; }
+            h3 { font-size: 1.3rem !important; }
+            .card { padding: 15px; }
+        }
+        
+        /* Gestos táctiles */
+        .slides-container {
+            touch-action: pan-x pinch-zoom;
+            cursor: grab;
+        }
+        
+        .slides-container:active {
+            cursor: grabbing;
+        }
+        
+        /* Ocultar UI del navegador en landscape (fullscreen) */
+        @media (orientation: landscape) {
+            /* Esto oculta la barra de direcciones en Chrome Android */
+            body {
+                position: fixed;
+                top: 0;
+                left: 0;
+                right: 0;
+                bottom: 0;
+            }
+        }
     </style>
 </head>
 <body>
 
-<!-- ADVERTENCIA DE ORIENTACIÓN -->
+<!-- ADVERTENCIA DE ORIENTACIÓN (solo visible en vertical) -->
 <div class="orientation-warning" id="orientationWarning">
     <i class="fas fa-mobile-alt rotate-animation text-7xl text-orange mb-6"></i>
     <i class="fas fa-undo-alt text-5xl text-white mb-5"></i>
     <h2 class="text-2xl font-bold mb-3">¡Gira tu teléfono!</h2>
     <p class="text-gray-300 mb-5 max-w-md text-center">
-        Para una mejor experiencia, coloca tu dispositivo en <strong class="text-orange">modo horizontal</strong>
+        Coloca tu dispositivo en <strong class="text-orange">modo horizontal</strong> para una mejor experiencia
     </p>
     <div class="bg-white/10 p-4 rounded-xl inline-block mb-5">
         <i class="fas fa-arrow-left text-orange text-2xl mx-2"></i>
@@ -287,48 +301,47 @@
         <p class="text-sm mt-2 text-gray-400">Gira la pantalla →</p>
     </div>
     <button class="force-rotate-btn" id="forceRotateBtn" style="background: var(--orange); color: var(--navy); border: none; padding: 12px 25px; border-radius: 50px; font-weight: bold; cursor: pointer;">
-        <i class="fas fa-check mr-2"></i> Continuar (ya giré)
+        <i class="fas fa-check mr-2"></i> Continuar
     </button>
 </div>
 
-<!-- CONTENIDO PRINCIPAL - SCROLL VERTICAL ÚNICO -->
-<div class="main-content" id="mainContent" style="display: none;">
-    <div class="scroll-progress" id="scrollProgress"></div>
+<!-- CONTENEDOR DE SLIDES HORIZONTALES -->
+<div class="slides-container" id="slidesContainer">
     
-    <!-- SECCIÓN 1: PORTADA -->
-    <section class="section section-dark" id="section1">
-        <div class="max-w-6xl mx-auto text-center fade-up">
-            <h3 class="text-orange tracking-widest uppercase mb-3 text-sm">Desarrollo Humano y Profesional</h3>
-            <h1 class="text-4xl md:text-7xl font-bold mb-4">Gestión Efectiva del Estrés</h1>
-            <h2 class="text-xl md:text-3xl font-light text-gray-300 mb-8">Y Desempeño Bajo Presión</h2>
-            <div class="flex justify-center items-center gap-5 mb-6">
-                <div class="h-20 w-20 rounded-full border-4 border-orange overflow-hidden bg-gray-200">
+    <!-- SLIDE 1: PORTADA (como estaba originalmente) -->
+    <div class="slide bg-navy text-white text-center" id="slide1">
+        <div class="max-w-4xl mx-auto flex flex-col justify-center h-full">
+            <h3 class="text-orange tracking-widest uppercase mb-4 text-sm">Desarrollo Humano y Profesional</h3>
+            <h1 class="text-5xl md:text-7xl font-bold mb-6">Gestión Efectiva del Estrés</h1>
+            <h2 class="text-2xl md:text-4xl font-light text-gray-300 mb-12">Y Desempeño Bajo Presión</h2>
+            <div class="flex justify-center items-center gap-5 mb-8">
+                <div class="h-24 w-24 rounded-full border-4 border-orange overflow-hidden bg-gray-200">
                     <img src="https://ui-avatars.com/api/?name=Francisco+Chirinos&background=FF8C00&color=002147&size=128&bold=true" alt="Facilitador">
                 </div>
                 <div class="text-left">
-                    <p class="text-lg md:text-xl font-bold">Francisco de Jesús Chirinos</p>
-                    <p class="text-orange text-sm md:text-base">Desarrollo Humano y Profesional</p>
+                    <p class="text-xl font-bold">Francisco de Jesús Chirinos</p>
+                    <p class="text-orange">Desarrollo Humano y Profesional</p>
                 </div>
             </div>
-            <p class="text-sm text-gray-400 mt-8">Taller práctico vivencial - 4 horas académicas</p>
-            <p class="text-xs text-gray-500 mt-3"><i class="fas fa-arrow-down mr-1"></i> Desliza hacia abajo para continuar</p>
+            <p class="text-sm text-gray-400 mt-8">© 2026 Todos los derechos reservados</p>
+            <p class="text-xs text-gray-500 mt-2">← → Desliza para navegar</p>
         </div>
-    </section>
+    </div>
     
-    <!-- SECCIÓN 2: ADN DEL PROGRAMA -->
-    <section class="section" id="section2">
-        <div class="max-w-6xl mx-auto grid grid-cols-1 md:grid-cols-2 gap-10 items-center fade-up">
+    <!-- SLIDE 2: ADN DEL PROGRAMA -->
+    <div class="slide bg-white" id="slide2">
+        <div class="max-w-6xl mx-auto grid grid-cols-1 md:grid-cols-2 gap-12 items-center h-full">
             <div>
                 <div class="module-badge">PROPÓSITO</div>
-                <h2 class="text-3xl md:text-4xl font-bold text-navy mb-3">ADN del Programa</h2>
-                <div class="title-line"></div>
-                <p class="text-lg md:text-xl text-gray-700 leading-relaxed italic">
+                <h2 class="text-4xl font-bold text-navy mb-4">ADN del Programa</h2>
+                <div class="title-line mb-6"></div>
+                <p class="text-xl text-gray-700 leading-relaxed italic">
                     "Fortalecer competencias emocionales, cognitivas y conductuales para enfrentar situaciones de presión de manera efectiva."
                 </p>
             </div>
-            <div class="bg-gray-50 p-6 rounded-3xl border-l-8 border-orange shadow-lg">
-                <h3 class="text-xl md:text-2xl font-bold text-navy mb-4">Objetivos Clave</h3>
-                <ul class="space-y-3">
+            <div class="bg-gray-50 p-8 rounded-3xl border-l-8 border-orange shadow-lg">
+                <h3 class="text-2xl font-bold text-navy mb-6">Objetivos Clave</h3>
+                <ul class="space-y-4">
                     <li class="flex items-start gap-3">
                         <i class="fas fa-check-circle text-orange mt-1"></i>
                         <span>Identificar fuentes de presión y estrés laboral.</span>
@@ -348,35 +361,35 @@
                 </ul>
             </div>
         </div>
-    </section>
+    </div>
     
-    <!-- SECCIÓN 3: MÓDULO I -->
-    <section class="section section-dark" id="section3">
-        <div class="max-w-5xl mx-auto fade-up">
+    <!-- SLIDE 3: MÓDULO I -->
+    <div class="slide bg-navy text-white" id="slide3">
+        <div class="max-w-5xl mx-auto h-full flex flex-col justify-center">
             <div class="module-badge">MÓDULO I</div>
-            <h2 class="text-3xl md:text-5xl font-bold mb-8">Comprensión del Estrés</h2>
-            <div class="grid-responsive mb-8">
+            <h2 class="text-5xl font-bold mb-8">Comprensión del Estrés</h2>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-8 mb-8">
                 <div class="card-dark p-6 rounded-xl">
                     <h3 class="text-2xl font-bold text-orange mb-3"><i class="fas fa-smile-beam mr-2"></i> Eustrés</h3>
-                    <p class="text-gray-200 text-lg">Estrés positivo. Nos motiva, nos mantiene enfocados y mejora el rendimiento.</p>
+                    <p class="text-gray-200 text-lg">Es el estrés positivo. Nos motiva, nos mantiene enfocados y mejora nuestro rendimiento ante retos manejables.</p>
                 </div>
                 <div class="card-dark p-6 rounded-xl">
                     <h3 class="text-2xl font-bold text-red-400 mb-3"><i class="fas fa-dizzy mr-2"></i> Distrés</h3>
-                    <p class="text-gray-200 text-lg">Estrés negativo. Nos bloquea, causa fatiga crónica y afecta la salud.</p>
+                    <p class="text-gray-200 text-lg">Es el estrés negativo. Nos bloquea, causa fatiga crónica y afecta nuestra salud física y mental.</p>
                 </div>
             </div>
-            <div class="bg-orange/20 p-6 rounded-xl border border-orange/50 text-center">
+            <div class="p-6 bg-orange/20 rounded-xl border border-orange/50 text-center">
                 <p class="text-xl font-semibold">"El estrés no es lo que nos pasa, sino cómo reaccionamos ante ello."</p>
             </div>
         </div>
-    </section>
+    </div>
     
-    <!-- SECCIÓN 4: MÓDULO II -->
-    <section class="section" id="section4">
-        <div class="max-w-6xl mx-auto fade-up">
+    <!-- SLIDE 4: MÓDULO II -->
+    <div class="slide bg-white" id="slide4">
+        <div class="max-w-6xl mx-auto h-full flex flex-col justify-center">
             <div class="module-badge">MÓDULO II</div>
-            <h2 class="text-3xl md:text-4xl font-bold text-navy mb-6">Autoconocimiento: Tus Detonantes</h2>
-            <div class="grid-responsive mb-8">
+            <h2 class="text-4xl font-bold text-navy mb-6">Autoconocimiento: Tus Detonantes</h2>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
                 <div class="card border-t-4 border-orange">
                     <i class="fas fa-bolt text-3xl text-orange mb-3"></i>
                     <h4 class="font-bold text-navy text-lg mb-2">Físicos</h4>
@@ -397,17 +410,17 @@
                 <div class="bg-orange p-3 rounded-full"><i class="fas fa-users text-navy text-xl"></i></div>
                 <div class="text-center md:text-left">
                     <h4 class="font-bold text-orange">🎯 DINÁMICA: "El Mapa de mis Detonantes"</h4>
-                    <p class="text-sm text-gray-300">Identifica los 3 factores que más elevan tu presión en el trabajo.</p>
+                    <p class="text-sm text-gray-300">Identifica en silencio los 3 factores que más elevan tu presión en la oficina.</p>
                 </div>
             </div>
         </div>
-    </section>
+    </div>
     
-    <!-- SECCIÓN 5: MÓDULO III -->
-    <section class="section" style="background: #f0f2f5;" id="section5">
-        <div class="max-w-6xl mx-auto fade-up">
+    <!-- SLIDE 5: MÓDULO III -->
+    <div class="slide bg-gray-50" id="slide5">
+        <div class="max-w-6xl mx-auto h-full flex flex-col justify-center">
             <div class="module-badge">MÓDULO III</div>
-            <h2 class="text-3xl md:text-4xl font-bold text-navy mb-8 text-center">Técnicas de Manejo de Estrés</h2>
+            <h2 class="text-4xl font-bold text-navy mb-8 text-center">Técnicas de Manejo de Estrés</h2>
             <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
                 <div class="space-y-5">
                     <div class="flex gap-4 items-start">
@@ -421,70 +434,70 @@
                         <span class="bg-orange text-navy h-8 w-8 flex items-center justify-center rounded-full font-bold text-sm">02</span>
                         <div>
                             <h4 class="font-bold text-xl">Gestión del Tiempo</h4>
-                            <p class="text-gray-600">Matriz de Prioridades: Diferenciar urgente de importante.</p>
+                            <p class="text-gray-600">Matriz de Prioridades: Diferenciar lo urgente de lo importante.</p>
                         </div>
                     </div>
                 </div>
                 <div class="bg-navy text-white p-6 rounded-3xl relative overflow-hidden">
                     <i class="fas fa-clock absolute -right-8 -bottom-8 text-7xl text-white/5"></i>
                     <h4 class="text-orange font-bold text-2xl mb-3">🧘 ¡Práctica en Vivo!</h4>
-                    <p class="mb-4">Ejercicio de respiración guiada para bajar el cortisol.</p>
-                    <button class="bg-orange text-navy px-6 py-2 rounded-full font-bold hover:bg-white transition" onclick="alert('🌬️ Respiración 4-7-8:\nInhala 4s\nRetén 7s\nExhala 8s\nRepite 4 veces')">
+                    <p class="mb-4">Vamos a realizar un ejercicio de respiración guiada para bajar el cortisol.</p>
+                    <button class="bg-orange text-navy px-6 py-2 rounded-full font-bold hover:bg-white transition" onclick="alert('🌬️ Respiración 4-7-8:\n\nInhala 4 segundos\nRetén 7 segundos\nExhala 8 segundos\n\nRepite 4 veces')">
                         <i class="fas fa-play mr-2"></i> Empezar
                     </button>
                 </div>
             </div>
         </div>
-    </section>
+    </div>
     
-    <!-- SECCIÓN 6: MÓDULO IV -->
-    <section class="section" id="section6">
-        <div class="max-w-5xl mx-auto fade-up">
+    <!-- SLIDE 6: MÓDULO IV -->
+    <div class="slide bg-white" id="slide6">
+        <div class="max-w-5xl mx-auto h-full flex flex-col justify-center">
             <div class="module-badge">MÓDULO IV</div>
-            <h2 class="text-3xl md:text-4xl font-bold text-navy mb-4">Desempeño Bajo Presión</h2>
+            <h2 class="text-4xl font-bold text-navy mb-4">Desempeño Bajo Presión</h2>
             <div class="title-line mb-8"></div>
-            <div class="grid-responsive">
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
                 <div class="text-center p-5">
                     <div class="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-3 border-2 border-orange">
                         <i class="fas fa-bolt text-navy text-2xl"></i>
                     </div>
                     <h4 class="font-bold text-lg">Decisiones Rápidas</h4>
-                    <p class="text-gray-500 text-sm">Agilidad mental sin perder precisión</p>
+                    <p class="text-gray-500 text-sm">Agilidad mental sin perder la precisión.</p>
                 </div>
                 <div class="text-center p-5">
                     <div class="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-3 border-2 border-orange">
                         <i class="fas fa-comments text-navy text-2xl"></i>
                     </div>
                     <h4 class="font-bold text-lg">Comunicación Crítica</h4>
-                    <p class="text-gray-500 text-sm">Mensajes claros cuando el tiempo es oro</p>
+                    <p class="text-gray-500 text-sm">Mensajes claros cuando el tiempo es oro.</p>
                 </div>
                 <div class="text-center p-5">
                     <div class="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-3 border-2 border-orange">
                         <i class="fas fa-puzzle-piece text-navy text-2xl"></i>
                     </div>
                     <h4 class="font-bold text-lg">Resolución</h4>
-                    <p class="text-gray-500 text-sm">Foco en la solución, no en el pánico</p>
+                    <p class="text-gray-500 text-sm">Foco en la solución, no en el pánico.</p>
                 </div>
             </div>
         </div>
-    </section>
+    </div>
     
-    <!-- SECCIÓN 7: MÓDULO V -->
-    <section class="section section-dark" id="section7">
-        <div class="max-w-4xl mx-auto text-center fade-up">
+    <!-- SLIDE 7: MÓDULO V -->
+    <div class="slide bg-navy text-white" id="slide7">
+        <div class="max-w-4xl mx-auto h-full flex flex-col justify-center text-center">
             <div class="module-badge">MÓDULO V</div>
-            <h2 class="text-3xl md:text-5xl font-bold mb-6">Resiliencia y Hábitos</h2>
-            <p class="text-xl md:text-2xl font-light text-gray-300 italic mb-8">
+            <h2 class="text-5xl font-bold mb-6">Resiliencia y Hábitos</h2>
+            <p class="text-2xl font-light text-gray-300 italic mb-8">
                 "La resiliencia no es aguantar el golpe, es aprender a rebotar más alto."
             </p>
-            <div class="grid grid-cols-2 md:grid-cols-4 gap-3">
+            <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
                 <div class="p-3 border border-orange/30 rounded-xl">
                     <i class="fas fa-seedling text-orange mb-2 text-xl"></i>
                     <p class="text-xs">Mentalidad de Crecimiento</p>
                 </div>
                 <div class="p-3 border border-orange/30 rounded-xl">
                     <i class="fas fa-adjust text-orange mb-2 text-xl"></i>
-                    <p class="text-xs">Adaptabilidad</p>
+                    <p class="text-xs">Adaptabilidad al Cambio</p>
                 </div>
                 <div class="p-3 border border-orange/30 rounded-xl">
                     <i class="fas fa-apple-alt text-orange mb-2 text-xl"></i>
@@ -496,153 +509,181 @@
                 </div>
             </div>
         </div>
-    </section>
+    </div>
     
-    <!-- SECCIÓN 8: CONTACTO Y CIERRE -->
-    <section class="section" id="section8">
-        <div class="max-w-4xl mx-auto text-center fade-up">
-            <h2 class="text-2xl md:text-4xl font-bold text-navy mb-4">¿Listo para transformar la presión en poder?</h2>
+    <!-- SLIDE 8: CONTACTO -->
+    <div class="slide bg-white text-navy" id="slide8">
+        <div class="max-w-4xl mx-auto h-full flex flex-col justify-center text-center">
+            <h2 class="text-4xl font-bold mb-4">¿Listo para transformar la presión en poder?</h2>
             <div class="title-line-center"></div>
             
-            <div class="card border-2 border-navy inline-block p-6 w-full max-w-md mx-auto mt-6">
-                <h3 class="text-xl md:text-2xl font-bold text-navy mb-4">Francisco de Jesús Chirinos</h3>
-                <div class="space-y-3 text-left">
-                    <div class="flex items-center gap-3">
-                        <i class="fab fa-whatsapp text-green-500 text-xl"></i>
+            <div class="card border-2 border-navy inline-block p-8 w-full max-w-md mx-auto mt-6">
+                <h3 class="text-2xl font-bold mb-6">Francisco de Jesús Chirinos</h3>
+                <div class="space-y-4 text-left">
+                    <div class="flex items-center gap-4">
+                        <i class="fab fa-whatsapp text-green-500 text-2xl"></i>
                         <span>+58 416 876 6671</span>
                     </div>
-                    <div class="flex items-center gap-3">
-                        <i class="far fa-envelope text-orange text-xl"></i>
+                    <div class="flex items-center gap-4">
+                        <i class="far fa-envelope text-orange text-2xl"></i>
                         <span class="break-all">conversandoconchirinos@gmail.com</span>
                     </div>
-                    <div class="flex items-center gap-3">
-                        <i class="fab fa-instagram text-pink-500 text-xl"></i>
+                    <div class="flex items-center gap-4">
+                        <i class="fab fa-instagram text-pink-500 text-2xl"></i>
                         <span>@conversandoconchirinos</span>
                     </div>
                 </div>
             </div>
             
             <p class="mt-8 text-gray-400 font-bold uppercase text-sm">✨ ¡Muchas Gracias! ✨</p>
-            <p class="text-xs text-gray-400 mt-3">© Francisco de Jesús Chirinos - Desarrollo Humano y Profesional</p>
+            <p class="text-xs text-gray-400 mt-3">© 2026 Francisco de Jesús Chirinos - Desarrollo Humano y Profesional</p>
         </div>
-    </section>
-    
-    <!-- BOTONES FLOTANTES MINIMALISTAS -->
-    <div class="nav-float">
-        <button class="nav-btn-mini" id="nextSectionBtn" title="Siguiente sección">
-            <i class="fas fa-arrow-down"></i>
-        </button>
     </div>
-    
-    <button class="scroll-top" id="scrollTopBtn" title="Volver arriba">
-        <i class="fas fa-arrow-up"></i>
+</div>
+
+<!-- BOTONES DE NAVEGACIÓN MINIMALISTAS (solo íconos) -->
+<div class="nav-buttons" id="navButtons">
+    <button class="nav-btn" id="prevSlideBtn">
+        <i class="fas fa-chevron-left"></i>
+    </button>
+    <button class="nav-btn" id="nextSlideBtn">
+        <i class="fas fa-chevron-right"></i>
     </button>
 </div>
 
+<!-- INDICADORES DE PÁGINA (puntos) -->
+<div class="page-dots" id="pageDots"></div>
+
 <script>
     // DETECCIÓN DE ORIENTACIÓN
+    let currentIndex = 0;
+    let slidesContainer = null;
+    let slides = [];
+    let totalSlides = 0;
+    
     function checkOrientation() {
         const warning = document.getElementById('orientationWarning');
-        const content = document.getElementById('mainContent');
+        const slidesContainerEl = document.getElementById('slidesContainer');
+        const navButtons = document.getElementById('navButtons');
+        const pageDots = document.getElementById('pageDots');
         
         if (window.matchMedia("(orientation: landscape)").matches) {
             warning.style.display = 'none';
-            content.style.display = 'block';
-            initScrollEffects();
+            slidesContainerEl.style.display = 'flex';
+            if (navButtons) navButtons.style.display = 'flex';
+            if (pageDots) pageDots.style.display = 'flex';
+            initSlideshow();
+            // Intentar ocultar la UI del navegador (fullscreen)
+            requestFullscreen();
         } else {
             warning.style.display = 'flex';
-            content.style.display = 'none';
+            slidesContainerEl.style.display = 'none';
+            if (navButtons) navButtons.style.display = 'none';
+            if (pageDots) pageDots.style.display = 'none';
         }
     }
     
-    // EFECTOS DE SCROLL
-    function initScrollEffects() {
-        const sections = document.querySelectorAll('.section');
-        const progressBar = document.getElementById('scrollProgress');
-        const scrollTopBtn = document.getElementById('scrollTopBtn');
-        const nextBtn = document.getElementById('nextSectionBtn');
+    // Solicitar pantalla completa (oculta la barra del navegador)
+    function requestFullscreen() {
+        const docEl = document.documentElement;
+        if (docEl.requestFullscreen) {
+            docEl.requestFullscreen().catch(() => {
+                // Silenciar error si el usuario no permite fullscreen
+            });
+        } else if (docEl.webkitRequestFullscreen) {
+            docEl.webkitRequestFullscreen();
+        }
+    }
+    
+    function initSlideshow() {
+        slidesContainer = document.getElementById('slidesContainer');
+        slides = document.querySelectorAll('.slide');
+        totalSlides = slides.length;
         
-        // Actualizar barra de progreso
-        function updateProgress() {
-            const scrollTop = window.scrollY;
-            const docHeight = document.documentElement.scrollHeight - window.innerHeight;
-            const scrollPercent = (scrollTop / docHeight) * 100;
-            progressBar.style.width = scrollPercent + '%';
-            
-            // Mostrar/ocultar botón volver arriba
-            if (scrollTop > 300) {
-                scrollTopBtn.classList.add('visible');
-            } else {
-                scrollTopBtn.classList.remove('visible');
-            }
+        if (!slidesContainer || slides.length === 0) return;
+        
+        // Crear indicadores de página (puntos)
+        const dotsContainer = document.getElementById('pageDots');
+        dotsContainer.innerHTML = '';
+        for (let i = 0; i < totalSlides; i++) {
+            const dot = document.createElement('div');
+            dot.classList.add('dot');
+            dot.dataset.index = i;
+            dot.addEventListener('click', () => {
+                goToSlide(i);
+            });
+            dotsContainer.appendChild(dot);
         }
         
-        // Animación fade-up al hacer scroll
-        const fadeElements = document.querySelectorAll('.fade-up');
-        
-        function checkFade() {
-            fadeElements.forEach(el => {
-                const rect = el.getBoundingClientRect();
-                const windowHeight = window.innerHeight;
-                if (rect.top < windowHeight - 100) {
-                    el.classList.add('visible');
+        // Actualizar punto activo
+        function updateActiveDot() {
+            const dots = document.querySelectorAll('.dot');
+            dots.forEach((dot, idx) => {
+                if (idx === currentIndex) {
+                    dot.classList.add('active');
+                } else {
+                    dot.classList.remove('active');
                 }
             });
         }
         
-        // Botón siguiente sección
-        nextBtn.addEventListener('click', () => {
-            const sections = document.querySelectorAll('.section');
-            let currentSectionIndex = 0;
-            const scrollPosition = window.scrollY + 100;
-            
-            for (let i = 0; i < sections.length; i++) {
-                const section = sections[i];
-                const sectionTop = section.offsetTop;
-                if (scrollPosition >= sectionTop) {
-                    currentSectionIndex = i;
-                }
-            }
-            
-            const nextIndex = currentSectionIndex + 1;
-            if (nextIndex < sections.length) {
-                sections[nextIndex].scrollIntoView({ behavior: 'smooth' });
-            }
-        });
-        
-        // Botón volver arriba
-        scrollTopBtn.addEventListener('click', () => {
-            window.scrollTo({ top: 0, behavior: 'smooth' });
-        });
-        
-        // Eventos de scroll
-        window.addEventListener('scroll', () => {
-            updateProgress();
-            checkFade();
-        });
-        
-        // Trigger inicial
-        updateProgress();
-        checkFade();
-        
-        // Activar fade-up inicial
-        setTimeout(() => {
-            fadeElements.forEach(el => {
-                const rect = el.getBoundingClientRect();
-                if (rect.top < window.innerHeight - 50) {
-                    el.classList.add('visible');
-                }
+        // Navegar a slide específico
+        function goToSlide(index) {
+            if (index < 0) index = 0;
+            if (index >= totalSlides) index = totalSlides - 1;
+            currentIndex = index;
+            slidesContainer.scrollTo({
+                left: slides[currentIndex].offsetLeft,
+                behavior: 'smooth'
             });
-        }, 100);
+            updateActiveDot();
+        }
+        
+        // Detectar scroll para actualizar índice
+        function handleScroll() {
+            const scrollPosition = slidesContainer.scrollLeft;
+            const slideWidth = slides[0]?.offsetWidth || 0;
+            const newIndex = Math.round(scrollPosition / slideWidth);
+            if (newIndex !== currentIndex && newIndex >= 0 && newIndex < totalSlides) {
+                currentIndex = newIndex;
+                updateActiveDot();
+            }
+        }
+        
+        // Event listeners
+        slidesContainer.addEventListener('scroll', handleScroll);
+        
+        document.getElementById('prevSlideBtn').addEventListener('click', () => {
+            goToSlide(currentIndex - 1);
+        });
+        
+        document.getElementById('nextSlideBtn').addEventListener('click', () => {
+            goToSlide(currentIndex + 1);
+        });
+        
+        // Teclado
+        document.addEventListener('keydown', (e) => {
+            if (document.getElementById('slidesContainer').style.display === 'flex') {
+                if (e.key === 'ArrowLeft') goToSlide(currentIndex - 1);
+                if (e.key === 'ArrowRight') goToSlide(currentIndex + 1);
+            }
+        });
+        
+        // Gestos táctiles ya manejados por scroll nativo
+        
+        // Inicializar
+        updateActiveDot();
+        
+        // Ajustar scroll después de resize
+        window.addEventListener('resize', () => {
+            setTimeout(() => {
+                goToSlide(currentIndex);
+            }, 100);
+        });
     }
     
-    // Botón "Ya giré"
+    // Botón "Continuar"
     document.getElementById('forceRotateBtn').addEventListener('click', () => {
-        if (screen.orientation && screen.orientation.lock) {
-            screen.orientation.lock('landscape').catch(() => {
-                // Si no puede bloquear, solo continuar
-            });
-        }
         checkOrientation();
     });
     
