@@ -82,6 +82,7 @@
             justify-content: center;
             white-space: normal;
             overflow: hidden;
+            position: relative;
         }
 
         /* CONTENIDO COMPACTO - TODO EN UNA SOLA VISTA */
@@ -91,7 +92,31 @@
             display: flex;
             flex-direction: column;
             justify-content: center;
-            padding: 15px 25px;
+            padding: 40px 25px 20px 25px;
+        }
+
+        /* ============================================ */
+        /* ENUMERADOR SUPERIOR - NO AFECTA EL RESTO */
+        /* ============================================ */
+        .slide-counter {
+            position: absolute;
+            top: 8px;
+            right: 15px;
+            background: rgba(0,0,0,0.4);
+            backdrop-filter: blur(4px);
+            padding: 4px 10px;
+            border-radius: 20px;
+            font-size: 0.65rem;
+            font-weight: bold;
+            color: white;
+            z-index: 50;
+            font-family: monospace;
+            letter-spacing: 0.5px;
+            border: 1px solid rgba(255,140,0,0.3);
+        }
+
+        .slide-counter span {
+            color: #FF8C00;
         }
 
         /* TAMAÑOS REDUCIDOS PARA QUE TODO ENTRE EN PANTALLA */
@@ -221,6 +246,7 @@
         
         <!-- SLIDE 1 - PORTADA -->
         <div class="slide bg-navy">
+            <div class="slide-counter">1/<span id="totalSlidesSpan">8</span></div>
             <div class="slide-content text-center text-white">
                 <h3 class="text-orange text-xs uppercase">Desarrollo Humano y Profesional</h3>
                 <h1 class="text-2xl font-bold">Gestión Efectiva del Estrés</h1>
@@ -241,6 +267,7 @@
 
         <!-- SLIDE 2 - ADN DEL PROGRAMA -->
         <div class="slide bg-white">
+            <div class="slide-counter">2/<span>8</span></div>
             <div class="slide-content">
                 <div class="module-badge">PROPÓSITO</div>
                 <h2 class="text-xl font-bold text-navy">ADN del Programa</h2>
@@ -260,6 +287,7 @@
 
         <!-- SLIDE 3 - MÓDULO I -->
         <div class="slide bg-navy">
+            <div class="slide-counter">3/<span>8</span></div>
             <div class="slide-content">
                 <div class="module-badge">MÓDULO I</div>
                 <h2 class="text-xl font-bold text-white">Comprensión del Estrés</h2>
@@ -281,6 +309,7 @@
 
         <!-- SLIDE 4 - MÓDULO II -->
         <div class="slide bg-white">
+            <div class="slide-counter">4/<span>8</span></div>
             <div class="slide-content">
                 <div class="module-badge">MÓDULO II</div>
                 <h2 class="text-xl font-bold text-navy">Autoconocimiento</h2>
@@ -310,6 +339,7 @@
 
         <!-- SLIDE 5 - MÓDULO III -->
         <div class="slide bg-gray-100">
+            <div class="slide-counter">5/<span>8</span></div>
             <div class="slide-content">
                 <div class="module-badge">MÓDULO III</div>
                 <h2 class="text-xl font-bold text-navy text-center">Técnicas de Manejo</h2>
@@ -332,6 +362,7 @@
 
         <!-- SLIDE 6 - MÓDULO IV -->
         <div class="slide bg-white">
+            <div class="slide-counter">6/<span>8</span></div>
             <div class="slide-content">
                 <div class="module-badge">MÓDULO IV</div>
                 <h2 class="text-xl font-bold text-navy">Desempeño Bajo Presión</h2>
@@ -345,6 +376,7 @@
 
         <!-- SLIDE 7 - MÓDULO V -->
         <div class="slide bg-navy">
+            <div class="slide-counter">7/<span>8</span></div>
             <div class="slide-content text-center">
                 <div class="module-badge">MÓDULO V</div>
                 <h2 class="text-xl font-bold text-white">Resiliencia</h2>
@@ -358,6 +390,7 @@
 
         <!-- SLIDE 8 - CONTACTO -->
         <div class="slide bg-white">
+            <div class="slide-counter">8/<span>8</span></div>
             <div class="slide-content text-center">
                 <h2 class="text-lg font-bold text-navy">¿Listo para transformar la presión?</h2>
                 <div class="card inline-block p-3 w-full max-w-xs mx-auto mt-2">
@@ -412,7 +445,11 @@
         const presentationDiv = document.getElementById('presentation');
         slides = document.querySelectorAll('.slide');
         totalSlides = slides.length;
-        if (totalSlides === 0) return;
+        
+        // Actualizar el total en los contadores
+        document.querySelectorAll('.slide-counter span').forEach(span => {
+            span.textContent = totalSlides;
+        });
 
         const dotsDiv = document.getElementById('dots');
         dotsDiv.innerHTML = '';
