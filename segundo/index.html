@@ -1,0 +1,543 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, user-scalable=no, shrink-to-fit=no">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="mobile-web-app-capable" content="yes">
+    <title>Taller: Gestión del Estrés - Francisco Chirinos</title>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@700&family=Lato:wght@400;700&display=swap" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --azul: #1A5276;
+            --naranja: #E67E22;
+            --fondo: #F5F5F5;
+            --verde: #1E8449;
+        }
+
+        html, body {
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+            position: fixed;
+            top: 0;
+            left: 0;
+            background: #ccc;
+        }
+
+        /* PANTALLA DE AVISO VERTICAL */
+        .rotate-warning {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: var(--azul);
+            z-index: 2000;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            color: white;
+            padding: 20px;
+        }
+
+        .rotate-warning.hide {
+            display: none;
+        }
+
+        /* CONTENEDOR PRINCIPAL - solo visible en horizontal */
+        .presentation {
+            width: 100%;
+            height: 100%;
+            display: none;
+            overflow-x: auto;
+            overflow-y: hidden;
+            scroll-snap-type: x mandatory;
+            scroll-behavior: smooth;
+            white-space: nowrap;
+            position: fixed;
+            top: 0;
+            left: 0;
+        }
+
+        .presentation.active {
+            display: block;
+        }
+
+        .slides {
+            display: flex;
+            width: 100%;
+            height: 100%;
+        }
+
+        .slide {
+            flex: 0 0 100%;
+            scroll-snap-align: start;
+            width: 100%;
+            height: 100%;
+            background: var(--fondo);
+            position: relative;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            padding: 30px 50px;
+            box-sizing: border-box;
+            white-space: normal;
+        }
+
+        /* CONTADOR SUPERIOR */
+        .slide-counter {
+            position: absolute;
+            top: 15px;
+            right: 20px;
+            background: rgba(26,82,118,0.7);
+            backdrop-filter: blur(4px);
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 0.7rem;
+            font-weight: bold;
+            color: white;
+            z-index: 50;
+            font-family: monospace;
+            border: 1px solid var(--naranja);
+        }
+
+        .slide-counter span {
+            color: var(--naranja);
+        }
+
+        /* Estilos tipográficos */
+        h1, h2, h3, h4 {
+            font-family: 'Montserrat', sans-serif;
+            color: var(--azul);
+            text-transform: uppercase;
+            margin: 0;
+        }
+
+        h1 { font-size: 2.5rem; }
+        h2 { font-size: 1.8rem; }
+        h3 { font-size: 1.3rem; }
+
+        .linea-naranja {
+            width: 80px;
+            height: 4px;
+            background: var(--naranja);
+            margin: 15px 0;
+        }
+
+        .linea-naranja-center {
+            width: 80px;
+            height: 4px;
+            background: var(--naranja);
+            margin: 15px auto;
+        }
+
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin-top: 20px;
+        }
+
+        .foto-perfil {
+            position: absolute;
+            bottom: 40px;
+            right: 50px;
+            width: 120px;
+            height: 120px;
+            border-radius: 50%;
+            border: 4px solid var(--azul);
+            overflow: hidden;
+            background: #eee;
+        }
+
+        .foto-perfil img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        ul {
+            list-style: none;
+            padding: 0;
+        }
+
+        li {
+            margin: 12px 0;
+            font-size: 0.9rem;
+            display: flex;
+            align-items: center;
+            font-family: 'Lato', sans-serif;
+        }
+
+        li::before {
+            content: "✓";
+            color: var(--naranja);
+            font-weight: bold;
+            margin-right: 12px;
+        }
+
+        .footer {
+            position: absolute;
+            bottom: 30px;
+            left: 50px;
+            font-size: 0.7rem;
+            color: var(--azul);
+            font-family: 'Lato', sans-serif;
+        }
+
+        .card-blanco {
+            background: white;
+            padding: 15px;
+            border-radius: 12px;
+            border-top: 4px solid var(--azul);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+        }
+
+        /* Ocultar scrollbar */
+        .presentation::-webkit-scrollbar { display: none; }
+        .presentation { -ms-overflow-style: none; scrollbar-width: none; }
+
+        /* Botones flotantes */
+        .nav-btn {
+            position: fixed;
+            bottom: 15px;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: rgba(26,82,118,0.85);
+            backdrop-filter: blur(4px);
+            color: white;
+            border: 1.5px solid var(--naranja);
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 100;
+            font-size: 1rem;
+        }
+        #prevBtn { left: 15px; }
+        #nextBtn { right: 15px; }
+
+        /* Puntos indicadores */
+        .dots {
+            position: fixed;
+            bottom: 15px;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            gap: 8px;
+            z-index: 100;
+            background: rgba(26,82,118,0.5);
+            backdrop-filter: blur(4px);
+            padding: 6px 12px;
+            border-radius: 30px;
+        }
+        .dot {
+            width: 7px;
+            height: 7px;
+            border-radius: 50%;
+            background: rgba(255,255,255,0.5);
+            cursor: pointer;
+        }
+        .dot.active {
+            background: var(--naranja);
+            width: 18px;
+            border-radius: 9px;
+        }
+
+        @keyframes rotateAnim {
+            0% { transform: rotate(0deg); }
+            50% { transform: rotate(90deg); }
+            100% { transform: rotate(0deg); }
+        }
+        .rotate-anim { animation: rotateAnim 1.5s ease-in-out infinite; display: inline-block; }
+
+        /* Responsive para pantallas pequeñas */
+        @media (max-width: 800px) and (orientation: landscape) {
+            .slide { padding: 20px 30px; }
+            h1 { font-size: 1.6rem; }
+            h2 { font-size: 1.2rem; }
+            li { font-size: 0.7rem; margin: 6px 0; }
+            .card-blanco { padding: 8px; }
+            .foto-perfil { width: 70px; height: 70px; bottom: 20px; right: 20px; }
+            .footer { bottom: 15px; left: 20px; font-size: 0.55rem; }
+            .grid { gap: 10px; }
+        }
+    </style>
+</head>
+<body>
+
+<!-- AVISO VERTICAL -->
+<div class="rotate-warning" id="rotateWarning">
+    <i class="fas fa-mobile-alt rotate-anim text-6xl text-orange mb-4"></i>
+    <i class="fas fa-undo-alt text-5xl text-white mb-4"></i>
+    <h2 class="text-2xl font-bold mb-3">¡Gira tu teléfono!</h2>
+    <p class="text-gray-300 mb-5">Coloca tu dispositivo en <strong style="color: var(--naranja);">modo horizontal</strong></p>
+    <button id="continueBtn" style="background: var(--naranja); color: var(--azul); border: none; padding: 12px 25px; border-radius: 50px; font-weight: bold; cursor: pointer;">
+        Continuar
+    </button>
+</div>
+
+<!-- PRESENTACIÓN HORIZONTAL -->
+<div class="presentation" id="presentation">
+    <div class="slides" id="slides">
+        
+        <!-- SLIDE 1 - PORTADA -->
+        <div class="slide">
+            <div class="slide-counter">1/<span id="totalSlidesSpan">8</span></div>
+            <div style="height: 5px; width: 100%; background: var(--azul); position: absolute; top: 0; left: 0;"></div>
+            <h1>GESTIÓN EFECTIVA DEL ESTRÉS</h1>
+            <h2 style="color: var(--naranja);">Y DESEMPEÑO BAJO PRESIÓN</h2>
+            <div class="linea-naranja"></div>
+            <p style="font-size: 1.2rem; font-weight: bold;">Taller práctico vivencial</p>
+            <div class="foto-perfil">
+                <img src="https://ui-avatars.com/api/?name=Francisco+Chirinos&background=E67E22&color=1A5276&size=200&bold=true" alt="Francisco Chirinos">
+            </div>
+            <div class="footer">
+                <strong>Francisco de Jesús Chirinos</strong><br>
+                Desarrollo Humano y Profesional
+            </div>
+        </div>
+
+        <!-- SLIDE 2 - ADN DEL PROGRAMA -->
+        <div class="slide">
+            <div class="slide-counter">2/<span>8</span></div>
+            <h2>ADN DEL PROGRAMA</h2>
+            <div class="linea-naranja"></div>
+            <p style="font-size: 1.1rem; line-height: 1.5; max-width: 80%;">
+                Desarrollar habilidades en los participantes para gestionar el estrés y responder de manera efectiva ante situaciones de alta presión laboral.
+            </p>
+            <div class="grid">
+                <ul>
+                    <li>Identificar fuentes de presión</li>
+                    <li>Reconocer respuestas físicas y emocionales</li>
+                    <li>Aplicar técnicas de regulación emocional</li>
+                </ul>
+                <ul>
+                    <li>Mejorar toma de decisiones bajo presión</li>
+                    <li>Fortalecer resiliencia y autocontrol</li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- SLIDE 3 - ESTRUCTURA DEL TALLER -->
+        <div class="slide">
+            <div class="slide-counter">3/<span>8</span></div>
+            <h2>ESTRUCTURA DEL TALLER (4 Horas)</h2>
+            <div class="linea-naranja"></div>
+            <div class="grid" style="grid-template-columns: repeat(3, 1fr);">
+                <div class="card-blanco" style="border-top-color: var(--azul);">
+                    <strong style="color: var(--azul);">Módulo I y II</strong><br>
+                    Comprensión y Autoconocimiento
+                </div>
+                <div class="card-blanco" style="border-top-color: var(--naranja);">
+                    <strong style="color: var(--naranja);">Módulo III</strong><br>
+                    Técnicas de manejo y respiración
+                </div>
+                <div class="card-blanco" style="border-top-color: var(--verde);">
+                    <strong style="color: var(--verde);">Módulo IV y V</strong><br>
+                    Trabajo bajo presión y Resiliencia
+                </div>
+            </div>
+        </div>
+
+        <!-- SLIDE 4 - MÓDULO I -->
+        <div class="slide">
+            <div class="slide-counter">4/<span>8</span></div>
+            <h2>MÓDULO I</h2>
+            <div class="linea-naranja"></div>
+            <h3>Comprensión del Estrés</h3>
+            <div class="grid" style="grid-template-columns: 1fr 1fr; margin-top: 20px;">
+                <div class="card-blanco" style="border-top-color: var(--verde);">
+                    <strong style="color: var(--verde);">✅ Eustrés (Positivo)</strong>
+                    <p style="font-size: 0.8rem; margin-top: 8px;">Nos motiva, enfoca y mejora el rendimiento.</p>
+                </div>
+                <div class="card-blanco" style="border-top-color: #c0392b;">
+                    <strong style="color: #c0392b;">⚠️ Distrés (Negativo)</strong>
+                    <p style="font-size: 0.8rem; margin-top: 8px;">Nos bloquea, causa fatiga y afecta la salud.</p>
+                </div>
+            </div>
+            <p style="margin-top: 20px; font-style: italic; color: var(--azul);">"El estrés no es lo que nos pasa, sino cómo reaccionamos ante ello."</p>
+        </div>
+
+        <!-- SLIDE 5 - MÓDULO II -->
+        <div class="slide">
+            <div class="slide-counter">5/<span>8</span></div>
+            <h2>MÓDULO II</h2>
+            <div class="linea-naranja"></div>
+            <h3>Autoconocimiento: Tus Detonantes</h3>
+            <div class="grid" style="grid-template-columns: repeat(3, 1fr); margin-top: 20px;">
+                <div class="card-blanco"><i class="fas fa-bolt" style="color: var(--naranja);"></i> <strong>Físicos</strong><br>Sudoración, taquicardia</div>
+                <div class="card-blanco"><i class="fas fa-brain" style="color: var(--naranja);"></i> <strong>Cognitivos</strong><br>Falta de concentración</div>
+                <div class="card-blanco"><i class="fas fa-heart" style="color: var(--naranja);"></i> <strong>Emocionales</strong><br>Irritabilidad, ansiedad</div>
+            </div>
+            <div style="background: var(--azul); color: white; padding: 12px; border-radius: 12px; margin-top: 20px; text-align: center;">
+                🎯 <strong style="color: var(--naranja);">DINÁMICA:</strong> "El Mapa de mis Detonantes"
+            </div>
+        </div>
+
+        <!-- SLIDE 6 - MÓDULO III -->
+        <div class="slide">
+            <div class="slide-counter">6/<span>8</span></div>
+            <h2>MÓDULO III</h2>
+            <div class="linea-naranja"></div>
+            <h3>Técnicas de Manejo del Estrés</h3>
+            <div class="grid" style="margin-top: 20px;">
+                <div class="card-blanco">
+                    <strong>🌬️ Respiración Consciente</strong>
+                    <p>Técnica 4-7-8: Inhala 4s, retén 7s, exhala 8s</p>
+                </div>
+                <div class="card-blanco">
+                    <strong>⏰ Gestión del Tiempo</strong>
+                    <p>Matriz de Eisenhower: urgente vs importante</p>
+                </div>
+            </div>
+            <div style="background: var(--azul); color: white; padding: 15px; border-radius: 12px; margin-top: 20px; text-align: center;">
+                <strong style="color: var(--naranja);">🧘 ¡Práctica en vivo!</strong><br>
+                <button id="breathingBtn" style="background: var(--naranja); color: var(--azul); border: none; padding: 8px 20px; border-radius: 50px; margin-top: 8px; font-weight: bold; cursor: pointer;">Empezar respiración</button>
+            </div>
+        </div>
+
+        <!-- SLIDE 7 - MÓDULOS IV y V -->
+        <div class="slide">
+            <div class="slide-counter">7/<span>8</span></div>
+            <h2>MÓDULOS IV y V</h2>
+            <div class="linea-naranja"></div>
+            <div class="grid">
+                <div class="card-blanco" style="border-top-color: var(--verde);">
+                    <strong style="color: var(--verde);">⚡ Trabajo bajo presión</strong>
+                    <p>Decisiones rápidas · Comunicación crítica · Resolución efectiva</p>
+                </div>
+                <div class="card-blanco" style="border-top-color: var(--azul);">
+                    <strong style="color: var(--azul);">🌱 Resiliencia y hábitos</strong>
+                    <p>Mentalidad de crecimiento · Adaptabilidad · Sostenibilidad</p>
+                </div>
+            </div>
+            <p style="margin-top: 20px; font-style: italic; text-align: center;">"La resiliencia no es aguantar el golpe, es aprender a rebotar más alto."</p>
+        </div>
+
+        <!-- SLIDE 8 - CONTACTO -->
+        <div class="slide" style="text-align: center; justify-content: center;">
+            <div class="slide-counter">8/<span>8</span></div>
+            <h1 style="font-size: 2rem;">¡TRANSFORMA EL ESTRÉS EN PODER!</h1>
+            <div class="linea-naranja-center"></div>
+            <div style="font-size: 1rem; color: var(--azul); line-height: 2;">
+                <strong>Francisco de Jesús Chirinos</strong><br>
+                📞 +58 416 876 6671 <br>
+                📧 conversandoconchirinos@gmail.com
+            </div>
+            <p style="margin-top: 40px; font-size: 0.7rem; color: gray;">© 2026 Todos los derechos reservados</p>
+        </div>
+    </div>
+</div>
+
+<!-- BOTONES FLOTANTES -->
+<button class="nav-btn" id="prevBtn" style="display: none;"><i class="fas fa-chevron-left"></i></button>
+<button class="nav-btn" id="nextBtn" style="display: none;"><i class="fas fa-chevron-right"></i></button>
+<div class="dots" id="dots" style="display: none;"></div>
+
+<script>
+    let currentIndex = 0;
+    let slides = [];
+    let totalSlides = 0;
+
+    function checkOrientation() {
+        const isLandscape = window.matchMedia("(orientation: landscape)").matches;
+        const warning = document.getElementById('rotateWarning');
+        const presentation = document.getElementById('presentation');
+        const prevBtn = document.getElementById('prevBtn');
+        const nextBtn = document.getElementById('nextBtn');
+        const dotsDiv = document.getElementById('dots');
+
+        if (isLandscape) {
+            warning.classList.add('hide');
+            presentation.classList.add('active');
+            prevBtn.style.display = 'flex';
+            nextBtn.style.display = 'flex';
+            dotsDiv.style.display = 'flex';
+            initSlideshow();
+        } else {
+            warning.classList.remove('hide');
+            presentation.classList.remove('active');
+            prevBtn.style.display = 'none';
+            nextBtn.style.display = 'none';
+            dotsDiv.style.display = 'none';
+        }
+    }
+
+    function initSlideshow() {
+        const presentationDiv = document.getElementById('presentation');
+        slides = document.querySelectorAll('.slide');
+        totalSlides = slides.length;
+        
+        document.querySelectorAll('.slide-counter span').forEach(span => {
+            span.textContent = totalSlides;
+        });
+
+        const dotsDiv = document.getElementById('dots');
+        dotsDiv.innerHTML = '';
+        for (let i = 0; i < totalSlides; i++) {
+            const dot = document.createElement('div');
+            dot.classList.add('dot');
+            dot.onclick = () => goToSlide(i);
+            dotsDiv.appendChild(dot);
+        }
+
+        function updateDots() {
+            document.querySelectorAll('.dot').forEach((dot, i) => {
+                dot.classList.toggle('active', i === currentIndex);
+            });
+        }
+
+        function goToSlide(index) {
+            if (index < 0) index = 0;
+            if (index >= totalSlides) index = totalSlides - 1;
+            currentIndex = index;
+            const scrollAmount = slides[currentIndex].offsetLeft;
+            presentationDiv.scrollTo({ left: scrollAmount, behavior: 'smooth' });
+            updateDots();
+        }
+
+        function handleScroll() {
+            const scrollPos = presentationDiv.scrollLeft;
+            const slideWidth = slides[0]?.offsetWidth || 0;
+            if (slideWidth > 0) {
+                const newIndex = Math.round(scrollPos / slideWidth);
+                if (newIndex !== currentIndex && newIndex >= 0 && newIndex < totalSlides) {
+                    currentIndex = newIndex;
+                    updateDots();
+                }
+            }
+        }
+
+        presentationDiv.addEventListener('scroll', handleScroll);
+        document.getElementById('prevBtn').onclick = () => goToSlide(currentIndex - 1);
+        document.getElementById('nextBtn').onclick = () => goToSlide(currentIndex + 1);
+
+        updateDots();
+        setTimeout(() => goToSlide(0), 100);
+    }
+
+    // Botón de respiración
+    document.getElementById('breathingBtn')?.addEventListener('click', () => {
+        alert('🌬️ Respiración 4-7-8:\n\nInhala 4 segundos\nRetén 7 segundos\nExhala 8 segundos\n\nRepite 4 veces');
+    });
+
+    document.getElementById('continueBtn').onclick = () => checkOrientation();
+    window.addEventListener('resize', checkOrientation);
+    window.addEventListener('orientationchange', checkOrientation);
+    window.addEventListener('load', checkOrientation);
+</script>
+</body>
+</html>
