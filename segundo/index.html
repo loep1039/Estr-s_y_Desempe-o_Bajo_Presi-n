@@ -2,542 +2,238 @@
 <html lang="es">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, user-scalable=no, shrink-to-fit=no">
-    <meta name="apple-mobile-web-app-capable" content="yes">
-    <meta name="mobile-web-app-capable" content="yes">
-    <title>Taller: Gestión del Estrés - Francisco Chirinos</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Taller Gestión del Estrés - Francisco Chirinos</title>
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@700&family=Lato:wght@400;700&display=swap" rel="stylesheet">
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
         :root {
             --azul: #1A5276;
             --naranja: #E67E22;
-            --fondo: #F5F5F5;
+            --gris-claro: #F5F5F5;
             --verde: #1E8449;
+            --blanco: #FFFFFF;
         }
-
-        html, body {
-            width: 100%;
-            height: 100%;
-            overflow: hidden;
-            position: fixed;
-            top: 0;
-            left: 0;
-            background: #ccc;
-        }
-
-        /* PANTALLA DE AVISO VERTICAL */
-        .rotate-warning {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: var(--azul);
-            z-index: 2000;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            text-align: center;
-            color: white;
-            padding: 20px;
-        }
-
-        .rotate-warning.hide {
-            display: none;
-        }
-
-        /* CONTENEDOR PRINCIPAL - solo visible en horizontal */
-        .presentation {
-            width: 100%;
-            height: 100%;
-            display: none;
-            overflow-x: auto;
-            overflow-y: hidden;
-            scroll-snap-type: x mandatory;
-            scroll-behavior: smooth;
-            white-space: nowrap;
-            position: fixed;
-            top: 0;
-            left: 0;
-        }
-
-        .presentation.active {
-            display: block;
-        }
-
-        .slides {
-            display: flex;
-            width: 100%;
-            height: 100%;
-        }
-
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body { background-color: #333; font-family: 'Lato', sans-serif; padding: 40px 0; }
+        
+        /* Estructura de la Lámina */
         .slide {
-            flex: 0 0 100%;
-            scroll-snap-align: start;
-            width: 100%;
-            height: 100%;
-            background: var(--fondo);
+            width: 1280px; height: 720px;
+            background-color: var(--blanco);
+            margin: 0 auto 50px auto;
             position: relative;
             overflow: hidden;
             display: flex;
             flex-direction: column;
-            justify-content: center;
-            padding: 30px 50px;
-            box-sizing: border-box;
-            white-space: normal;
+            padding: 60px;
+            box-shadow: 0 20px 50px rgba(0,0,0,0.3);
         }
 
-        /* CONTADOR SUPERIOR */
-        .slide-counter {
-            position: absolute;
-            top: 15px;
-            right: 20px;
-            background: rgba(26,82,118,0.7);
-            backdrop-filter: blur(4px);
-            padding: 4px 12px;
-            border-radius: 20px;
-            font-size: 0.7rem;
-            font-weight: bold;
-            color: white;
-            z-index: 50;
-            font-family: monospace;
-            border: 1px solid var(--naranja);
-        }
+        /* Elementos Comunes */
+        .header-line { position: absolute; top: 0; left: 0; width: 100%; height: 10px; background: var(--azul); }
+        h1, h2 { font-family: 'Montserrat', sans-serif; color: var(--azul); text-transform: uppercase; }
+        .linea-decorativa { width: 80px; height: 4px; background: var(--naranja); margin: 15px 0; }
+        
+        /* Estilos Específicos */
+        .modulo-tag { color: var(--azul); font-weight: bold; font-size: 18px; letter-spacing: 2px; }
+        .bullet-list { list-style: none; margin-top: 30px; }
+        .bullet-list li { font-size: 24px; margin-bottom: 20px; padding-left: 40px; position: relative; color: #444; }
+        .bullet-list li::before { content: "●"; position: absolute; left: 0; color: var(--naranja); }
 
-        .slide-counter span {
-            color: var(--naranja);
+        /* Portada */
+        .portada-content { display: flex; flex-direction: column; justify-content: center; height: 100%; }
+        .foto-francisco {
+            position: absolute; bottom: 60px; right: 80px;
+            width: 400px; height: 500px;
+            border-radius: 20px; border: 8px solid var(--blanco);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            background: #ddd; overflow: hidden;
         }
+        .foto-francisco img { width: 100%; height: 100%; object-fit: cover; }
 
-        /* Estilos tipográficos */
-        h1, h2, h3, h4 {
-            font-family: 'Montserrat', sans-serif;
-            color: var(--azul);
-            text-transform: uppercase;
-            margin: 0;
-        }
-
-        h1 { font-size: 2.5rem; }
-        h2 { font-size: 1.8rem; }
-        h3 { font-size: 1.3rem; }
-
-        .linea-naranja {
-            width: 80px;
-            height: 4px;
-            background: var(--naranja);
-            margin: 15px 0;
-        }
-
-        .linea-naranja-center {
-            width: 80px;
-            height: 4px;
-            background: var(--naranja);
-            margin: 15px auto;
-        }
-
-        .grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-            gap: 20px;
-            margin-top: 20px;
-        }
-
-        .foto-perfil {
-            position: absolute;
-            bottom: 40px;
-            right: 50px;
-            width: 120px;
-            height: 120px;
-            border-radius: 50%;
-            border: 4px solid var(--azul);
-            overflow: hidden;
-            background: #eee;
-        }
-
-        .foto-perfil img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-        }
-
-        ul {
-            list-style: none;
-            padding: 0;
-        }
-
-        li {
-            margin: 12px 0;
-            font-size: 0.9rem;
-            display: flex;
-            align-items: center;
-            font-family: 'Lato', sans-serif;
-        }
-
-        li::before {
-            content: "✓";
-            color: var(--naranja);
-            font-weight: bold;
-            margin-right: 12px;
-        }
-
-        .footer {
-            position: absolute;
-            bottom: 30px;
-            left: 50px;
-            font-size: 0.7rem;
-            color: var(--azul);
-            font-family: 'Lato', sans-serif;
-        }
-
-        .card-blanco {
-            background: white;
-            padding: 15px;
-            border-radius: 12px;
-            border-top: 4px solid var(--azul);
-            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
-        }
-
-        /* Ocultar scrollbar */
-        .presentation::-webkit-scrollbar { display: none; }
-        .presentation { -ms-overflow-style: none; scrollbar-width: none; }
-
-        /* Botones flotantes */
-        .nav-btn {
-            position: fixed;
-            bottom: 15px;
-            width: 40px;
-            height: 40px;
-            border-radius: 50%;
-            background: rgba(26,82,118,0.85);
-            backdrop-filter: blur(4px);
-            color: white;
-            border: 1.5px solid var(--naranja);
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            z-index: 100;
-            font-size: 1rem;
-        }
-        #prevBtn { left: 15px; }
-        #nextBtn { right: 15px; }
-
-        /* Puntos indicadores */
-        .dots {
-            position: fixed;
-            bottom: 15px;
-            left: 50%;
-            transform: translateX(-50%);
-            display: flex;
-            gap: 8px;
-            z-index: 100;
-            background: rgba(26,82,118,0.5);
-            backdrop-filter: blur(4px);
-            padding: 6px 12px;
-            border-radius: 30px;
-        }
-        .dot {
-            width: 7px;
-            height: 7px;
-            border-radius: 50%;
-            background: rgba(255,255,255,0.5);
-            cursor: pointer;
-        }
-        .dot.active {
-            background: var(--naranja);
-            width: 18px;
-            border-radius: 9px;
-        }
-
-        @keyframes rotateAnim {
-            0% { transform: rotate(0deg); }
-            50% { transform: rotate(90deg); }
-            100% { transform: rotate(0deg); }
-        }
-        .rotate-anim { animation: rotateAnim 1.5s ease-in-out infinite; display: inline-block; }
-
-        /* Responsive para pantallas pequeñas */
-        @media (max-width: 800px) and (orientation: landscape) {
-            .slide { padding: 20px 30px; }
-            h1 { font-size: 1.6rem; }
-            h2 { font-size: 1.2rem; }
-            li { font-size: 0.7rem; margin: 6px 0; }
-            .card-blanco { padding: 8px; }
-            .foto-perfil { width: 70px; height: 70px; bottom: 20px; right: 20px; }
-            .footer { bottom: 15px; left: 20px; font-size: 0.55rem; }
-            .grid { gap: 10px; }
-        }
+        /* Dinámicas */
+        .dinamica-box { background: #E8F0F5; padding: 40px; border-radius: 15px; border-left: 10px solid var(--naranja); margin-top: 20px; }
     </style>
 </head>
 <body>
 
-<!-- AVISO VERTICAL -->
-<div class="rotate-warning" id="rotateWarning">
-    <i class="fas fa-mobile-alt rotate-anim text-6xl text-orange mb-4"></i>
-    <i class="fas fa-undo-alt text-5xl text-white mb-4"></i>
-    <h2 class="text-2xl font-bold mb-3">¡Gira tu teléfono!</h2>
-    <p class="text-gray-300 mb-5">Coloca tu dispositivo en <strong style="color: var(--naranja);">modo horizontal</strong></p>
-    <button id="continueBtn" style="background: var(--naranja); color: var(--azul); border: none; padding: 12px 25px; border-radius: 50px; font-weight: bold; cursor: pointer;">
-        Continuar
-    </button>
-</div>
-
-<!-- PRESENTACIÓN HORIZONTAL -->
-<div class="presentation" id="presentation">
-    <div class="slides" id="slides">
-        
-        <!-- SLIDE 1 - PORTADA -->
-        <div class="slide">
-            <div class="slide-counter">1/<span id="totalSlidesSpan">8</span></div>
-            <div style="height: 5px; width: 100%; background: var(--azul); position: absolute; top: 0; left: 0;"></div>
-            <h1>GESTIÓN EFECTIVA DEL ESTRÉS</h1>
-            <h2 style="color: var(--naranja);">Y DESEMPEÑO BAJO PRESIÓN</h2>
-            <div class="linea-naranja"></div>
-            <p style="font-size: 1.2rem; font-weight: bold;">Taller práctico vivencial</p>
-            <div class="foto-perfil">
-                <img src="https://ui-avatars.com/api/?name=Francisco+Chirinos&background=E67E22&color=1A5276&size=200&bold=true" alt="Francisco Chirinos">
-            </div>
-            <div class="footer">
-                <strong>Francisco de Jesús Chirinos</strong><br>
-                Desarrollo Humano y Profesional
+    <div class="slide">
+        <div class="header-line"></div>
+        <div class="portada-content">
+            <h1 style="font-size: 60px; line-height: 1.1;">GESTIÓN EFECTIVA<br>DEL ESTRÉS [cite: 7]</h1>
+            <h2 style="color: var(--naranja); font-size: 35px; margin-top: 10px;">Y Desempeño Bajo Presión [cite: 7]</h2>
+            <div class="linea-decorativa" style="width: 200px; margin: 40px 0;"></div>
+            <p style="font-size: 28px; font-weight: bold; color: var(--azul);">Taller Práctico Vivencial [cite: 7]</p>
+            
+            <div style="margin-top: 80px;">
+                <p style="font-size: 22px;"><strong>Francisco de Jesús Chirinos [cite: 1, 71]</strong></p>
+                <p style="color: var(--naranja); font-size: 18px;">Desarrollo Humano y Profesional [cite: 1, 72]</p>
             </div>
         </div>
-
-        <!-- SLIDE 2 - ADN DEL PROGRAMA -->
-        <div class="slide">
-            <div class="slide-counter">2/<span>8</span></div>
-            <h2>ADN DEL PROGRAMA</h2>
-            <div class="linea-naranja"></div>
-            <p style="font-size: 1.1rem; line-height: 1.5; max-width: 80%;">
-                Desarrollar habilidades en los participantes para gestionar el estrés y responder de manera efectiva ante situaciones de alta presión laboral.
-            </p>
-            <div class="grid">
-                <ul>
-                    <li>Identificar fuentes de presión</li>
-                    <li>Reconocer respuestas físicas y emocionales</li>
-                    <li>Aplicar técnicas de regulación emocional</li>
-                </ul>
-                <ul>
-                    <li>Mejorar toma de decisiones bajo presión</li>
-                    <li>Fortalecer resiliencia y autocontrol</li>
-                </ul>
-            </div>
-        </div>
-
-        <!-- SLIDE 3 - ESTRUCTURA DEL TALLER -->
-        <div class="slide">
-            <div class="slide-counter">3/<span>8</span></div>
-            <h2>ESTRUCTURA DEL TALLER (4 Horas)</h2>
-            <div class="linea-naranja"></div>
-            <div class="grid" style="grid-template-columns: repeat(3, 1fr);">
-                <div class="card-blanco" style="border-top-color: var(--azul);">
-                    <strong style="color: var(--azul);">Módulo I y II</strong><br>
-                    Comprensión y Autoconocimiento
-                </div>
-                <div class="card-blanco" style="border-top-color: var(--naranja);">
-                    <strong style="color: var(--naranja);">Módulo III</strong><br>
-                    Técnicas de manejo y respiración
-                </div>
-                <div class="card-blanco" style="border-top-color: var(--verde);">
-                    <strong style="color: var(--verde);">Módulo IV y V</strong><br>
-                    Trabajo bajo presión y Resiliencia
-                </div>
-            </div>
-        </div>
-
-        <!-- SLIDE 4 - MÓDULO I -->
-        <div class="slide">
-            <div class="slide-counter">4/<span>8</span></div>
-            <h2>MÓDULO I</h2>
-            <div class="linea-naranja"></div>
-            <h3>Comprensión del Estrés</h3>
-            <div class="grid" style="grid-template-columns: 1fr 1fr; margin-top: 20px;">
-                <div class="card-blanco" style="border-top-color: var(--verde);">
-                    <strong style="color: var(--verde);">✅ Eustrés (Positivo)</strong>
-                    <p style="font-size: 0.8rem; margin-top: 8px;">Nos motiva, enfoca y mejora el rendimiento.</p>
-                </div>
-                <div class="card-blanco" style="border-top-color: #c0392b;">
-                    <strong style="color: #c0392b;">⚠️ Distrés (Negativo)</strong>
-                    <p style="font-size: 0.8rem; margin-top: 8px;">Nos bloquea, causa fatiga y afecta la salud.</p>
-                </div>
-            </div>
-            <p style="margin-top: 20px; font-style: italic; color: var(--azul);">"El estrés no es lo que nos pasa, sino cómo reaccionamos ante ello."</p>
-        </div>
-
-        <!-- SLIDE 5 - MÓDULO II -->
-        <div class="slide">
-            <div class="slide-counter">5/<span>8</span></div>
-            <h2>MÓDULO II</h2>
-            <div class="linea-naranja"></div>
-            <h3>Autoconocimiento: Tus Detonantes</h3>
-            <div class="grid" style="grid-template-columns: repeat(3, 1fr); margin-top: 20px;">
-                <div class="card-blanco"><i class="fas fa-bolt" style="color: var(--naranja);"></i> <strong>Físicos</strong><br>Sudoración, taquicardia</div>
-                <div class="card-blanco"><i class="fas fa-brain" style="color: var(--naranja);"></i> <strong>Cognitivos</strong><br>Falta de concentración</div>
-                <div class="card-blanco"><i class="fas fa-heart" style="color: var(--naranja);"></i> <strong>Emocionales</strong><br>Irritabilidad, ansiedad</div>
-            </div>
-            <div style="background: var(--azul); color: white; padding: 12px; border-radius: 12px; margin-top: 20px; text-align: center;">
-                🎯 <strong style="color: var(--naranja);">DINÁMICA:</strong> "El Mapa de mis Detonantes"
-            </div>
-        </div>
-
-        <!-- SLIDE 6 - MÓDULO III -->
-        <div class="slide">
-            <div class="slide-counter">6/<span>8</span></div>
-            <h2>MÓDULO III</h2>
-            <div class="linea-naranja"></div>
-            <h3>Técnicas de Manejo del Estrés</h3>
-            <div class="grid" style="margin-top: 20px;">
-                <div class="card-blanco">
-                    <strong>🌬️ Respiración Consciente</strong>
-                    <p>Técnica 4-7-8: Inhala 4s, retén 7s, exhala 8s</p>
-                </div>
-                <div class="card-blanco">
-                    <strong>⏰ Gestión del Tiempo</strong>
-                    <p>Matriz de Eisenhower: urgente vs importante</p>
-                </div>
-            </div>
-            <div style="background: var(--azul); color: white; padding: 15px; border-radius: 12px; margin-top: 20px; text-align: center;">
-                <strong style="color: var(--naranja);">🧘 ¡Práctica en vivo!</strong><br>
-                <button id="breathingBtn" style="background: var(--naranja); color: var(--azul); border: none; padding: 8px 20px; border-radius: 50px; margin-top: 8px; font-weight: bold; cursor: pointer;">Empezar respiración</button>
-            </div>
-        </div>
-
-        <!-- SLIDE 7 - MÓDULOS IV y V -->
-        <div class="slide">
-            <div class="slide-counter">7/<span>8</span></div>
-            <h2>MÓDULOS IV y V</h2>
-            <div class="linea-naranja"></div>
-            <div class="grid">
-                <div class="card-blanco" style="border-top-color: var(--verde);">
-                    <strong style="color: var(--verde);">⚡ Trabajo bajo presión</strong>
-                    <p>Decisiones rápidas · Comunicación crítica · Resolución efectiva</p>
-                </div>
-                <div class="card-blanco" style="border-top-color: var(--azul);">
-                    <strong style="color: var(--azul);">🌱 Resiliencia y hábitos</strong>
-                    <p>Mentalidad de crecimiento · Adaptabilidad · Sostenibilidad</p>
-                </div>
-            </div>
-            <p style="margin-top: 20px; font-style: italic; text-align: center;">"La resiliencia no es aguantar el golpe, es aprender a rebotar más alto."</p>
-        </div>
-
-        <!-- SLIDE 8 - CONTACTO -->
-        <div class="slide" style="text-align: center; justify-content: center;">
-            <div class="slide-counter">8/<span>8</span></div>
-            <h1 style="font-size: 2rem;">¡TRANSFORMA EL ESTRÉS EN PODER!</h1>
-            <div class="linea-naranja-center"></div>
-            <div style="font-size: 1rem; color: var(--azul); line-height: 2;">
-                <strong>Francisco de Jesús Chirinos</strong><br>
-                📞 +58 416 876 6671 <br>
-                📧 conversandoconchirinos@gmail.com
-            </div>
-            <p style="margin-top: 40px; font-size: 0.7rem; color: gray;">© 2026 Todos los derechos reservados</p>
+        <div class="foto-francisco">
+            <img src="image_6ea9e4.png" alt="Francisco Chirinos" onerror="this.parentElement.style.display='flex'; this.parentElement.style.alignItems='center'; this.parentElement.style.justifyContent='center'; this.parentElement.innerHTML='<p style=\'padding:20px; text-align:center\'>Foto de Francisco<br>(image_6ea9e4.png)</p>';">
         </div>
     </div>
-</div>
 
-<!-- BOTONES FLOTANTES -->
-<button class="nav-btn" id="prevBtn" style="display: none;"><i class="fas fa-chevron-left"></i></button>
-<button class="nav-btn" id="nextBtn" style="display: none;"><i class="fas fa-chevron-right"></i></button>
-<div class="dots" id="dots" style="display: none;"></div>
+    <div class="slide">
+        <div class="header-line"></div>
+        <h2>ADN del Programa [cite: 8]</h2>
+        <div class="linea-decorativa"></div>
+        <p style="font-size: 26px; line-height: 1.6; color: #555; margin-top: 20px;">
+            En entornos laborales actuales, los colaboradores requieren desarrollar habilidades para mantener el rendimiento sin afectar su bienestar. [cite: 9] Esta capacitación busca fortalecer competencias emocionales para enfrentar la presión de manera efectiva. [cite: 10]
+        </p>
+        <div class="dinamica-box" style="border-color: var(--azul);">
+            <p style="font-size: 24px;"><strong>Objetivo General: [cite: 18]</strong><br>Desarrollar habilidades para gestionar el estrés y responder efectivamente ante alta presión laboral. [cite: 19]</p>
+        </div>
+    </div>
 
-<script>
-    let currentIndex = 0;
-    let slides = [];
-    let totalSlides = 0;
+    <div class="slide">
+        <div class="header-line"></div>
+        <h2>Objetivos Específicos </h2>
+        <div class="linea-decorativa"></div>
+        <ul class="bullet-list">
+            <li>Identificar fuentes de presión y estrés laboral. [cite: 21]</li>
+            <li>Reconocer respuestas físicas y emocionales ante el estrés. [cite: 22]</li>
+            <li>Aplicar técnicas de regulación emocional. [cite: 23]</li>
+            <li>Mejorar la toma de decisiones bajo presión. [cite: 24]</li>
+            <li>Fortalecer la resiliencia y el autocontrol. [cite: 25]</li>
+        </ul>
+    </div>
 
-    function checkOrientation() {
-        const isLandscape = window.matchMedia("(orientation: landscape)").matches;
-        const warning = document.getElementById('rotateWarning');
-        const presentation = document.getElementById('presentation');
-        const prevBtn = document.getElementById('prevBtn');
-        const nextBtn = document.getElementById('nextBtn');
-        const dotsDiv = document.getElementById('dots');
+    <div class="slide">
+        <div class="header-line"></div>
+        <p class="modulo-tag">MÓDULO I [cite: 38]</p>
+        <h1>Comprensión del estrés [cite: 39]</h1>
+        <div class="linea-decorativa"></div>
+        <ul class="bullet-list">
+            <li>¿Qué es el estrés y cómo funciona? [cite: 40]</li>
+            <li>Diferencia entre estrés positivo (Eustrés) y negativo (Distrés). [cite: 42, 43]</li>
+            <li>La biología de la respuesta de lucha o huida.</li>
+        </ul>
+    </div>
 
-        if (isLandscape) {
-            warning.classList.add('hide');
-            presentation.classList.add('active');
-            prevBtn.style.display = 'flex';
-            nextBtn.style.display = 'flex';
-            dotsDiv.style.display = 'flex';
-            initSlideshow();
-        } else {
-            warning.classList.remove('hide');
-            presentation.classList.remove('active');
-            prevBtn.style.display = 'none';
-            nextBtn.style.display = 'none';
-            dotsDiv.style.display = 'none';
-        }
-    }
+    <div class="slide">
+        <div class="header-line"></div>
+        <p class="modulo-tag">MÓDULO II [cite: 47]</p>
+        <h1>Autoconocimiento [cite: 51]</h1>
+        <div class="linea-decorativa"></div>
+        <ul class="bullet-list">
+            <li>Identificación de detonantes personales. [cite: 53, 54]</li>
+            <li>Evaluación individual del nivel de estrés. [cite: 56]</li>
+            <li>Señales de alerta: cuerpo, mente y conducta.</li>
+        </ul>
+    </div>
 
-    function initSlideshow() {
-        const presentationDiv = document.getElementById('presentation');
-        slides = document.querySelectorAll('.slide');
-        totalSlides = slides.length;
+    <div class="slide" style="background: var(--gris-claro);">
+        <div class="header-line" style="background: var(--naranja);"></div>
+        <h2 style="color: var(--naranja);">🧪 DINÁMICA PRÁCTICA</h2>
+        <h1>Mapa de Detonantes</h1>
+        <div class="dinamica-box">
+            <p style="font-size: 22px; line-height: 1.8;">
+                <strong>1. Individual:</strong> Enumera tus 3 principales estresores en la oficina.<br>
+                <strong>2. Parejas:</strong> Comparte cómo reacciona tu cuerpo ante ellos.<br>
+                <strong>3. Plenaria:</strong> Identificamos patrones comunes en el equipo.
+            </p>
+        </div>
+    </div>
+
+    <div class="slide">
+        <div class="header-line"></div>
+        <p class="modulo-tag">MÓDULO III [cite: 58]</p>
+        <h1>Técnicas de manejo [cite: 60]</h1>
+        <div class="linea-decorativa"></div>
+        <ul class="bullet-list">
+            <li>Respiración consciente y relajación técnica. [cite: 64, 65]</li>
+            <li>Gestión del tiempo y prioridades. [cite: 66]</li>
+            <li>La importancia de las pausas activas.</li>
+        </ul>
+    </div>
+
+    <div class="slide">
+        <div class="header-line"></div>
+        <h2>Técnica: Respiración de Caja</h2>
+        <div class="linea-decorativa"></div>
+        <div style="display: flex; justify-content: center; align-items: center; height: 100%;">
+            <div style="border: 5px solid var(--azul); padding: 50px; text-align: center; border-radius: 20px;">
+                <h1 style="font-size: 80px; color: var(--naranja);">4 - 4 - 4 - 4</h1>
+                <p style="font-size: 24px; margin-top: 20px;">Inhala (4s) - Retiene (4s) - Exhala (4s) - Pausa (4s)</p>
+            </div>
+        </div>
+    </div>
+
+    <div class="slide">
+        <div class="header-line"></div>
+        <p class="modulo-tag">MÓDULO IV [cite: 41]</p>
+        <h1>Trabajo bajo presión [cite: 44]</h1>
+        <div class="linea-decorativa"></div>
+        <ul class="bullet-list">
+            <li>Toma de decisiones rápidas y asertivas. [cite: 45]</li>
+            <li>Comunicación efectiva en situaciones críticas. [cite: 48, 49]</li>
+            <li>Resolución de problemas con enfoque en soluciones. [cite: 52]</li>
+        </ul>
+    </div>
+
+    <div class="slide" style="background: #2C3E50; color: white;">
+        <div class="header-line" style="background: #c0392b;"></div>
+        <h2 style="color: var(--naranja);">⚡ SIMULACIÓN REAL [cite: 35]</h2>
+        <h1 style="color: white;">Zona Roja de Decisiones</h1>
+        <div class="dinamica-box" style="background: rgba(255,255,255,0.1); border-color: #c0392b;">
+            <p style="font-size: 24px; color: white;">
+                Ejercicio cronometrado donde el participante debe resolver una crisis de comunicación interna en 120 segundos utilizando las técnicas aprendidas.
+            </p>
+        </div>
+    </div>
+
+    <div class="slide">
+        <div class="header-line"></div>
+        <p class="modulo-tag">MÓDULO V [cite: 55]</p>
+        <h1>Resiliencia y Hábitos [cite: 57]</h1>
+        <div class="linea-decorativa"></div>
+        <ul class="bullet-list">
+            <li>Adaptabilidad ante el cambio constante. [cite: 59]</li>
+            <li>Desarrollo de una mentalidad de crecimiento. [cite: 61]</li>
+            <li>Estrategias sostenibles para el bienestar a largo plazo. [cite: 62, 63]</li>
+        </ul>
+    </div>
+
+    <div class="slide">
+        <div class="header-line"></div>
+        <div class="grid">
+            <div>
+                <h2>Beneficios [cite: 26]</h2>
+                <div class="linea-decorativa"></div>
+                <ul class="bullet-list" style="font-size: 20px;">
+                    <li>Mejor manejo del estrés. [cite: 27]</li>
+                    <li>Claridad en toma de decisiones. [cite: 28]</li>
+                    <li>Reducción de errores. [cite: 29]</li>
+                    <li>Productividad optimizada. [cite: 31]</li>
+                </ul>
+            </div>
+            <div>
+                <h2>Metodología [cite: 32]</h2>
+                <div class="linea-decorativa"></div>
+                <ul class="bullet-list">
+                    <li>Talleres prácticos. [cite: 33]</li>
+                    <li>Estudios de caso. [cite: 34]</li>
+                    <li>Simulaciones reales. [cite: 35]</li>
+                    <li>Feedback en tiempo real. [cite: 37]</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <div class="slide" style="text-align: center; justify-content: center;">
+        <div class="header-line"></div>
+        <h1 style="font-size: 50px;">EL ESTRÉS NO DESAPARECE,<br><span style="color: var(--naranja);">TÚ LO GOBIERNAS</span></h1>
+        <div class="linea-decorativa" style="margin: 40px auto; width: 300px;"></div>
         
-        document.querySelectorAll('.slide-counter span').forEach(span => {
-            span.textContent = totalSlides;
-        });
+        <div style="margin-top: 50px; font-size: 22px; color: var(--azul);">
+            <p><strong>Francisco de Jesús Chirinos [cite: 71]</strong></p>
+            <p>Desarrollo Humano y Profesional [cite: 72]</p>
+            <p style="margin-top: 20px;">📞 +58 416 876 6671 [cite: 5, 73]</p>
+            <p>📧 conversandoconchirinos@gmail.com [cite: 6, 74]</p>
+        </div>
+    </div>
 
-        const dotsDiv = document.getElementById('dots');
-        dotsDiv.innerHTML = '';
-        for (let i = 0; i < totalSlides; i++) {
-            const dot = document.createElement('div');
-            dot.classList.add('dot');
-            dot.onclick = () => goToSlide(i);
-            dotsDiv.appendChild(dot);
-        }
-
-        function updateDots() {
-            document.querySelectorAll('.dot').forEach((dot, i) => {
-                dot.classList.toggle('active', i === currentIndex);
-            });
-        }
-
-        function goToSlide(index) {
-            if (index < 0) index = 0;
-            if (index >= totalSlides) index = totalSlides - 1;
-            currentIndex = index;
-            const scrollAmount = slides[currentIndex].offsetLeft;
-            presentationDiv.scrollTo({ left: scrollAmount, behavior: 'smooth' });
-            updateDots();
-        }
-
-        function handleScroll() {
-            const scrollPos = presentationDiv.scrollLeft;
-            const slideWidth = slides[0]?.offsetWidth || 0;
-            if (slideWidth > 0) {
-                const newIndex = Math.round(scrollPos / slideWidth);
-                if (newIndex !== currentIndex && newIndex >= 0 && newIndex < totalSlides) {
-                    currentIndex = newIndex;
-                    updateDots();
-                }
-            }
-        }
-
-        presentationDiv.addEventListener('scroll', handleScroll);
-        document.getElementById('prevBtn').onclick = () => goToSlide(currentIndex - 1);
-        document.getElementById('nextBtn').onclick = () => goToSlide(currentIndex + 1);
-
-        updateDots();
-        setTimeout(() => goToSlide(0), 100);
-    }
-
-    // Botón de respiración
-    document.getElementById('breathingBtn')?.addEventListener('click', () => {
-        alert('🌬️ Respiración 4-7-8:\n\nInhala 4 segundos\nRetén 7 segundos\nExhala 8 segundos\n\nRepite 4 veces');
-    });
-
-    document.getElementById('continueBtn').onclick = () => checkOrientation();
-    window.addEventListener('resize', checkOrientation);
-    window.addEventListener('orientationchange', checkOrientation);
-    window.addEventListener('load', checkOrientation);
-</script>
 </body>
 </html>
